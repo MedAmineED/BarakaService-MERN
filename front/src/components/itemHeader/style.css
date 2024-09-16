@@ -1,0 +1,17 @@
+#SousTitre {
+    font-weight: bolder;
+}
+
+.add-btn {
+    font-size:  0.8em;
+    background-color: #b7b67a;
+    color: #C01635;
+    font-weight: bolder;
+    border: 2px solid #C01635;
+}
+.add-btn:hover {
+    color: white;
+    background-color: #C01635;
+    border: 2px solid #daf7a6;
+    transition: 0.3s;
+  }

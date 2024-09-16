@@ -1,0 +1,41 @@
+fieldset{
+    width:400px;
+    padding:25px;
+    padding-top:0;
+    margin:25px auto;
+    background:white;
+    box-shadow:2px 2px 5px #5C3E2D;
+}
+
+#iIndex label{
+   font-family:"Sakkal Majalla","Amiri","Traditional Arabic";
+   font-size:32px;
+    color: #C01636;
+    font-style:bold;
+}
+
+#iIndex input[type="text"],input[type="password"] {
+   font-family:"Amiri","Traditional Arabic";
+   font-size:22px;
+   color: white;
+   background:#C01636;
+}
+
+#iIndex input[type="submit"] {
+border: 0;
+padding: 5px 15px;
+color: #C01636;
+transition: 0.4s;
+border: 1px solid #C0C1C1;
+background: gray;
+font-family:"Sakkal Majalla","Amiri","Traditional Arabic";
+font-size:25px;
+font-style:bold;
+cursor:pointer;
+border-radius:10px;
+}
+
+#iIndex input[type="submit"]:hover {
+background: #C01636;
+color:  #fff;
+}

@@ -1,0 +1,15 @@
+.relativDiv{
+    position: relative;
+}
+.devModal{
+    position: sticky;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+

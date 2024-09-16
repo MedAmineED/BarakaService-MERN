@@ -1,0 +1,18 @@
+/* InputModal.css */
+.compact-modal .modal-content {
+    border-radius: 8px;
+  }
+  
+  .compact-modal .modal-header {
+    padding: 1rem;
+  }
+  
+  .compact-modal .modal-title {
+    font-size: 1.1rem;
+    font-weight: bolder;
+  }
+  
+  .compact-modal .modal-body {
+    padding: 1rem;
+  }
+  

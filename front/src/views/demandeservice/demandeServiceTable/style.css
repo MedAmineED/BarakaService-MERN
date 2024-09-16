@@ -1,0 +1,42 @@
+.table-footer {
+    padding: 0;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .footer-item {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+  }
+
+  .footer-item span {
+    font-size: 0.9rem;
+  }
+  
+  .footer-title {
+    font-weight: bold;
+  }
+  
+  .footer-value {
+    font-weight: normal;
+    color: black;
+  }
+
+  .ttc .footer-title{
+    font-size: 1rem;
+  }
+  .ttc .footer-value {
+    font-size: 1rem;
+    font-weight: 800;
+    color: green;
+  }
+
+
+  .remise .footer-value {
+    color: red;
+  }
+  .footer-item:not(:last-child) {
+    border-bottom: 1px solid #dee2e6;
+  }
+  

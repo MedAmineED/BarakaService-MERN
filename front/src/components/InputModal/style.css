@@ -1,0 +1,26 @@
+  .compact-form {
+    padding: 1rem;
+  }
+  .compact-form .form-label {
+    font-size: 0.85rem;
+    font-weight: bolder;
+    color: #495057;
+  }
+  
+  .compact-form .form-control,
+  .compact-form .form-select,
+  .compact-form .input-group-text {
+    font-size: 0.875rem;
+    height: calc(1.5em + 0.5rem + 2px);
+    border-radius: 4px;
+  }
+
+  
+  .compact-modal .modal-footer {
+    padding: 1rem;
+  }
+  
+  .compact-modal .btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+  }
