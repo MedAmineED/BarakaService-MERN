@@ -39,6 +39,7 @@ const DetailsService: React.FC = () => {
        setLigneDemandes(demandeService?.ligneDemandes)
     }
   }, [demandeService])
+  
   useEffect(() => {
     fetchDemandeList();
   }, [id]);

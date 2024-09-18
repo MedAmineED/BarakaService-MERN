@@ -96,7 +96,6 @@ const DemandeService: FC = () => {
   const addDemandeService = useCallback(async () => {
     console.log(validateForm())
     console.log(errors)
-    console.log(formData)
     if (!validateForm()) return;
 
     try {
@@ -118,9 +117,13 @@ const DemandeService: FC = () => {
   useEffect(() => {
     // Update formData when ligneDemandeArr changes
     if(ligneDemandeListe.length > 0){
-      setFormData((prevData) => ({...prevData, prix_ttc: totals.montant_TTC, lignedemande: ligneDemandeListe }));
+      setFormData((prevData) => ({...prevData, lignedemande: ligneDemandeListe }));
     }
   },[ligneDemandeListe]);
+
+  useEffect(() => {
+    setFormData((prevData) => ({...prevData, prix_ttc: totals.montant_TTC}));
+  }, [totals]);
 
 
   const memoizedServiceListModal = useMemo(() => (

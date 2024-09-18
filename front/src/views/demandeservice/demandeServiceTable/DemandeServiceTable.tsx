@@ -59,7 +59,7 @@ const DemandeServiceTable: FC<DemandeServiceTableProps> = () => {
       updatedLigneDemande.tax_total = tax_total;
       updatedLigneDemande.prix_TTC = prix_TTC;
 
-
+ 
 
       // -- calcalculations of global totals and set it in their state
       montant_HT += parseFloat((lnDmn.prix * lnDmn.quantite).toFixed(3));
