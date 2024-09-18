@@ -48,8 +48,6 @@ const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, re
   const [searchValue, setSearchValue] = useState<string>('');
 
 
-  console.log("modale service");
-
 
   const handleSearch = async () => {
     await fetchServiceList();

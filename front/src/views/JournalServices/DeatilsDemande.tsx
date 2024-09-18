@@ -5,13 +5,19 @@ import DemandeServiceEntity from '../../entities/DemandeServiceEntity';
 import DemandeServiceService from '../../ApiServices/DemandeServiceService';
 import ApiUrls from '../../ApiUrl/ApiUrls';
 import LigneDemande from '../../entities/LigneDemande';
+import './detailsStyle.css';
 
 
 const DetailsService: React.FC = () => {
   const [demandeService, setDemandeService] = useState<DemandeServiceEntity | null>({});
   const [ligneDemandes, setLigneDemandes] = useState<LigneDemande[] | []>([]);
-  const [paiementMethod, setMethodState] = useState<string> ("")
+  const [paiementMethod, setMethodState] = useState<string> ("espece")
   const [isPertiel, setIsPertiel] = useState<boolean>(false);
+  const [totals, setTotals] = useState({
+    totalRemise: 0,
+    totalTax: 0,
+    totalTTC: 0,
+  });
 
   const location = useLocation();
   const { id } = location.state;
@@ -37,11 +43,31 @@ const DetailsService: React.FC = () => {
     fetchDemandeList();
   }, [id]);
 
-  // if (!demandeService?.lignedemande) return <div>Loading...</div>;
 
-  const prixTH = 1000
-  const remiseTotal = 50
-  const taxTotal = 100
+  useEffect(() => {
+    // Calculate totals
+    let totalRemise = 0;
+    let totalTax = 0;
+    let totalTTC = 0;
+
+    ligneDemandes.forEach((ld) => {
+      const prixAfterRemise = ld.prix - (ld.remise || 0);
+      const tax = prixAfterRemise * (ld.tax || 0) / 100; // Assuming tax is a percentage
+      const ttc = (prixAfterRemise * ld.quantite) + tax;
+
+      totalRemise += ld.remise || 0;
+      totalTax += tax;
+      totalTTC += ttc;
+    });
+
+    setTotals({
+      totalRemise,
+      totalTax,
+      totalTTC,
+    });
+  }, [ligneDemandes]);
+
+  // if (!demandeService?.lignedemande) return <div>Loading...</div>;
 
   return (
     <main id="main">
@@ -49,64 +75,67 @@ const DetailsService: React.FC = () => {
         <div className="container-fluid">
           <div className="container">
             <div className="d-flex justify-content-between align-items-center py-3">
-              <h2 className="h5 mb-0">Numero de Commandes #{15}</h2>
+              <h2 className="h5 mb-0">Numero de Commandes #{demandeService?.id_dem}</h2>
             </div>
 
             <div className="row">
-              <div className="col-lg-8">
-                <div className="card cardpaiment mb-4">
-                  <div className="card-body">
-                    <div className="mb-3 d-flex justify-content-between">
-                      <div>
-                        <span className="me-3">{"22-06-2024"}</span>
-                        <span className="me-3">#{555}</span>
-                      </div>
-                    </div>
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <td className="text-start">Reference</td>
-                          <td className="text-start">Designation</td>
-                          <td className="text-start">Prix</td>
-                          <td className="text-start">TVA</td>
-                          <td className="text-start">Remise</td>
-                          <td className="text-start">Quantite</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ligneDemandes.map((item, index) => (
-                          <tr key={index}>
-                            <td className="text-start">{item.reference}</td>
-                            <td className="text-start">{item.designation}</td>
-                            <td className="text-start">{item.prix}</td>
-                            <td className="text-start">{item.tva}</td>
-                            <td className="text-start">{item.remise}</td>
-                            <td className="text-start">{item.quantite}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot className='d-flex flex-column'>
-                        <tr>
-                          <td colSpan={2}>Prix HT</td>
-                          <td className="text-end">{prixTH} DT</td>
-                        </tr>
-                        <tr>
-                          <td colSpan={2}>TAX TOTAL</td>
-                          <td className="text-end">{taxTotal} DT</td>
-                        </tr>
-                        <tr>
-                          <td colSpan={2}>Remise</td>
-                          <td className="text-danger text-end">{remiseTotal} DT</td>
-                        </tr>
-                        <tr className="fw-bold">
-                          <td colSpan={2}>TOTAL</td>
-                          <td className="text-end">{5000} DT</td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
+              <div className="col-lg-9">
+                
+              <div className="invoice-header">
+  </div>
+  <div className="ui segment cards scroll-x-auto">
 
+    <div className="ui segment itemscard">
+      <div className="content">
+      <table className="ui celled table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Libelle</th>
+                            <th className="text-center colfix">Prix U</th>
+                            <th className="text-center colfix">Qte</th>
+                            <th className="text-center colfix">Remise</th>
+                            <th className="text-center colfix">Tax</th>
+                            <th className="text-center colfix">TTC</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {
+                            ligneDemandes.map((ld, index) => {
+                              const prixAfterRemise = ld.prix - (ld.remise || 0);
+                              const tax = prixAfterRemise * (ld.tax || 0) / 100;
+                              const ttc = (prixAfterRemise * ld.quantite) + tax;
+
+                              return (
+                                <tr key={index}>
+                                  <td>
+                                    {ld.designation}
+                                    <br />
+                                    <small className="text-muted">{ld.type}</small>
+                                  </td>
+                                  <td className="text-right align-middle">{ld.prix} DT</td>
+                                  <td className="text-right align-middle">{ld.quantite}</td>
+                                  <td className="text-right align-middle">{ld.remise} DT</td>
+                                  <td className="text-right align-middle">{tax.toFixed(3)} DT</td>
+                                  <td className="text-right align-middle">{ttc.toFixed(3)} DT</td>
+                                </tr>
+                              );
+                            })
+                          }
+                        </tbody>
+                        <tfoot className="full-width">
+                          <tr>
+                            <th>Total:</th>
+                            <th colSpan={2}></th>
+                            <th colSpan={1}>{totals.totalRemise.toFixed(2)} DT</th>
+                            <th colSpan={1}>{totals.totalTax.toFixed(2)} DT</th>
+                            <th colSpan={1}>{totals.totalTTC.toFixed(2)} DT</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+
+      </div>
+    </div>
+  </div>
                 {/* Payment section */}
                 <div className="card mb-4">
                   <div className="card-body">
@@ -193,7 +222,7 @@ const DetailsService: React.FC = () => {
                 </div>
               </div>
 
-              <div className="col-lg-4">
+              <div className="col-lg-3">
                 <div className="card mb-4">
                   <div className="card-body">
                     <p><strong>Informations</strong></p>

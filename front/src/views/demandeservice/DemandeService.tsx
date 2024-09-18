@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { z } from 'zod';
 import { demandeServiceSchema } from '../../util/validationSchema';
@@ -16,19 +16,9 @@ import './style.css';
 import VehiculeForm from './vehiculeForm/VehiculeForm';
 import ClientForm from './clientForm/ClientForm';
 import EmployeeForm from './employeeForm/EmployeeForm';
+import { SelectedItmsContext } from '../../contexts/Contexts';
 
 
-const columns = [
-  { header: 'N°', accessor: 'index' },
-  { header: 'libelle', accessor: 'designation' },
-  { header: 'prix unitaire', accessor: 'prix' },
-  { header: 'quantite', accessor: 'quantite' },
-  { header: 'prix HT', accessor: 'prix' },
-  { header: 'remise U', accessor: 'remise' },
-  { header: 'tax', accessor: 'tax' },
-  { header: 'tax total', accessor: 'tax_total' },
-  { header: 'prix TTC', accessor: 'prix_TTC' },
-];
 
 const initialFormData: DemandeServiceEntity = {
   matricule: '',
@@ -39,7 +29,7 @@ const initialFormData: DemandeServiceEntity = {
   employer: '',
   heure_deb: '',
   heure_fin: '',
-  payer: 1, 
+  payer: 0, 
   prix_ttc: 0,
   lignedemande: [],
 };
@@ -56,7 +46,7 @@ const initialFormData: DemandeServiceEntity = {
  * ligneService
  * kol checkbox <===== item
  *         |
- *         |========> transfer item to ligneService
+ *         |========> transform item to ligneService
  * 
  * 
  * 
@@ -68,15 +58,14 @@ const initialFormData: DemandeServiceEntity = {
 
 const DemandeService: FC = () => {
 
+  const context = useContext(SelectedItmsContext);
+  const  { ligneDemandeListe, totals, reset } = context;
   const [formData, setFormData] = useState<DemandeServiceEntity>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
 
 
 
-  const getPrixTTC = useCallback((prixTTC: number) => {
-    // setFormData((prevData) => ({ ...prevData, prix_ttc: prixTTC }));
-  }, [formData]);
 
   const validateForm = useCallback(() => {
     try {
@@ -95,6 +84,15 @@ const DemandeService: FC = () => {
     }
   }, [formData]);
 
+
+
+  const resetAll = ()=> {
+    setFormData(initialFormData);
+    reset()
+  }
+
+
+
   const addDemandeService = useCallback(async () => {
     console.log(validateForm())
     console.log(errors)
@@ -103,8 +101,9 @@ const DemandeService: FC = () => {
 
     try {
       const data = await DemandeServiceService.AddDemandeService(ApiUrls.DEMANDE_SERVICE, formData);
-      setFormData(initialFormData);
+      
       console.log("demande service added successfully", data);
+      resetAll();
     } catch (error) {
       console.error('Error adding demande service:', error);
     }
@@ -115,6 +114,13 @@ const DemandeService: FC = () => {
     setFormData((prevData) => ({ ...prevData, [id]: value }));
   }, []);
 
+
+  useEffect(() => {
+    // Update formData when ligneDemandeArr changes
+    if(ligneDemandeListe.length > 0){
+      setFormData((prevData) => ({...prevData, prix_ttc: totals.montant_TTC, lignedemande: ligneDemandeListe }));
+    }
+  },[ligneDemandeListe]);
 
 
   const memoizedServiceListModal = useMemo(() => (
@@ -191,12 +197,10 @@ const DemandeService: FC = () => {
                   </Row>
                 </Container>
               </div>
-              <DemandeServiceTable
-                getPrixTTC={getPrixTTC}
-              />
+              <DemandeServiceTable/>
               <Row className="mt-3">
                 <Col className="text-end">
-                  <Button variant="secondary" className="me-2 custom-btn custom-btn-reset" onClick={()=>{}}>Réinitialiser</Button>
+                  <Button variant="secondary" className="me-2 custom-btn custom-btn-reset" onClick={()=>{resetAll()}}>Réinitialiser</Button>
                   <Button variant="primary" className="custom-btn custom-btn-save" onClick={()=> {addDemandeService()}}>Enregistrer</Button>
                 </Col>
               </Row>

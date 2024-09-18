@@ -15,6 +15,14 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
     const [selectedItems, setSelectedItems] = useState<{id: number, type: string}[] | []>([]);
     const [ligneDemandeListe, setLigneDemandeListe] = useState<LigneDemande[] | []>([]);
 
+    //totals
+    const [totals, setTotals] = useState({
+      montant_HT: 0,
+      remise_total: 0,
+      montant_TVA: 0,
+      montant_TTC: 0,
+    });
+
 
     
     //------- add to selectedItems
@@ -32,7 +40,7 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
     //------- add to ligneDemande
     const transformFromItemToLigneDemande = (item: Item): LigneDemande | void => {
         let ligne: LigneDemande | null = null;
-    
+     
         // Check if the item is a service
         if ('libelle' in item) {
             ligne = {
@@ -103,17 +111,33 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
             return i.element!== item.element && i.type == item.type;
             }));
     };
+
+
+    //----reset all data --------------------
+    const reset = () => {
+        setSelectedItems([]);
+        setLigneDemandeListe([]);
+        setTotals({
+            montant_HT: 0,
+            remise_total: 0,
+            montant_TVA: 0,
+            montant_TTC: 0,
+        });
+    }
     
 
     return (
         <SelectedItmsContext.Provider value={{ 
             selectedItems, 
             ligneDemandeListe,
+            totals,
+            setTotals,
             setLigneDemandeListe,
             handleItemSelect, 
             removeItemSelect,
             transformFromItemToLigneDemande,
             removeItemSelectXbutton,
+            reset,
         }}>
             {children}
         </SelectedItmsContext.Provider>

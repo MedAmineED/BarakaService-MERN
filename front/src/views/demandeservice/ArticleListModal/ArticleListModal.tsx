@@ -73,8 +73,6 @@ const ArticleListModal: FC<ArticleModalProps> = ({
   const [searchBy, setSearchBy] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
 
-  console.log('modale article');
-
   const handleSearch = async () => {
     await fetchArticleList();
   };

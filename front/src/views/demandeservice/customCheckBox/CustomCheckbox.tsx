@@ -20,9 +20,6 @@ interface CustomChckboxProps {
     useEffect(() => {
       const isSelected = selectedItems.some(
         (selectedItem: { id: number | undefined; type: string; }) =>{
-          if(selectedItem.id == item.id){
-            console.log(selectedItem.id, '==', item.id)
-          }
           return  selectedItem.id == item.id && selectedItem.type == ('libelle' in item ? 'service' : 'article')
         }
       );

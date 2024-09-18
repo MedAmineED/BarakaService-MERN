@@ -12,7 +12,7 @@ interface ClientFormProps {
 
 const ClientForm: FC<ClientFormProps> = ({ formData, handleChange, errors }) => (
   <div className="section">
-    <div className="section-title inputs-sec-title">Client</div>
+    <div className="section-title inputs-sec-title"></div>
     <div className="inline-inputs">
       <Form.Group controlId="client" className="mb-2 input-container">
         <Form.Label>Nom du Client</Form.Label>

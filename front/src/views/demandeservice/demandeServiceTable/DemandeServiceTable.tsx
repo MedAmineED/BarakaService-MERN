@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Table, Row, Col } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './style.css';
 import { SelectedItmsContext } from '../../../contexts/Contexts';
-import LigneDemande from 'src/entities/LigneDemande';
+import LigneDemande from '../../../entities/LigneDemande';
 
 interface Column {
   header: string;
@@ -23,30 +23,60 @@ const columns : Column[] = [
 ];
 
 interface DemandeServiceTableProps {
-  getPrixTTC : (ttc : number)=> void
 }
 
-const DemandeServiceTable: FC<DemandeServiceTableProps> = ({
-  getPrixTTC
-}) => {
+const DemandeServiceTable: FC<DemandeServiceTableProps> = () => {
   const context = useContext(SelectedItmsContext);
-  const { ligneDemandeListe, removeItemSelect, removeItemSelectXbutton } = context;
-  // Calculate totals
-  const totals = {
-    montant_HT: 0,
-    remise_total: 0,
-    montant_TVA: 0,
-    montant_TTC: 0,
-  };
+  const { ligneDemandeListe, removeItemSelect, removeItemSelectXbutton, totals, setTotals } = context;
+
+  const [ligneDemandeFinale, setLigneDemandeFinale] = useState<LigneDemande[] | []>([]);
+
+
+
+
+
 
   const onDelete = (item: LigneDemande) => {
-    console.log(item)
     removeItemSelectXbutton(item);
-    getPrixTTC(totals.montant_TTC);
+
   };
 
   useEffect(()=> {
-    getPrixTTC(totals.montant_TTC);
+    let ligneDemandeArr: LigneDemande[] | [] = [];
+    let montant_HT = 0;
+    let remise_total = 0;
+    let montant_TVA = 0;
+    let montant_TTC = 0;
+    ligneDemandeListe.map((lnDmn : LigneDemande)=>{
+      //-- calculate tax, tax total and prix ttc, and set all new attr in updated ligne (ligne demande finale)
+      const updatedLigneDemande = {...lnDmn};
+
+      const tax = parseFloat((lnDmn.prix * lnDmn.tva / 100).toFixed(3));
+      const tax_total = parseFloat((tax * lnDmn.quantite).toFixed(3));
+      const prix_TTC = parseFloat(((lnDmn.prix * lnDmn.quantite) + tax_total - (lnDmn.remise * lnDmn.quantite)).toFixed(3));
+
+      updatedLigneDemande.tax = tax;
+      updatedLigneDemande.tax_total = tax_total;
+      updatedLigneDemande.prix_TTC = prix_TTC;
+
+
+
+      // -- calcalculations of global totals and set it in their state
+      montant_HT += parseFloat((lnDmn.prix * lnDmn.quantite).toFixed(3));
+      remise_total += parseFloat((lnDmn.remise * lnDmn.quantite).toFixed(3));
+      montant_TVA += parseFloat((updatedLigneDemande.tax_total).toFixed(3));
+      montant_TTC += parseFloat((updatedLigneDemande.prix_TTC).toFixed(3));
+
+      setTotals({
+        montant_HT,
+        remise_total,
+        montant_TVA,
+        montant_TTC,
+      });
+
+      ligneDemandeArr = [updatedLigneDemande, ...ligneDemandeArr];
+    })
+    setLigneDemandeFinale(ligneDemandeArr);
   }, [ligneDemandeListe])
 
   return (
@@ -62,7 +92,7 @@ const DemandeServiceTable: FC<DemandeServiceTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {ligneDemandeListe.map((item, rowIndex) => (
+            {ligneDemandeFinale.map((item, rowIndex) => (
               <tr key={item.id || rowIndex}>
                 <td className="text-center">
                   <i onClick={() => onDelete(item)} className="bi bi-x-circle text-danger" style={{ cursor: 'pointer' }}></i>

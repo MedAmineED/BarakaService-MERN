@@ -6,7 +6,7 @@ import DemandeServiceEntity from '../../entities/DemandeServiceEntity';
 import DemandeServiceServices from '../../ApiServices/DemandeServiceService';
 import ApiUrls from '../../ApiUrl/ApiUrls';
 import Pagination from '../../components/pagination/Pagination';
-import { FetchType, InputFieldConfig } from 'src/util/types';
+import { FetchType, InputFieldConfig } from '../../util/types';
 import GenericTable from '../../components/table/GenericTable';
 import { useNavigate } from 'react-router-dom';
 import ServiceEntity from '../../entities/ServiceEntity';
@@ -18,7 +18,6 @@ interface SeeDeatailsProps {
 }
 
 const SeeDetails :FC<SeeDeatailsProps> = ({ id })=> {
-  console.log("id from navigate " + id)
   const navigate = useNavigate();
 
   return <button onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className='btn btn-primary w-100 p-0'>
@@ -44,7 +43,7 @@ const columns = [
   { header: 'Date Demande', accessor: 'date_demande' },
   { header: 'Matricule', accessor: 'matricule' },
   { header: 'Client', accessor: 'client' },
-  { header: 'Employeur', accessor: 'employer' },
+  { header: 'Employee', accessor: 'employer' },
   { header: 'Payé', accessor: 'payer',  
     render : (clmns: Column[], dataLine: DemandeServiceEntity) : ReactElement=> {
       return dataLine[clmns[4].accessor] == 1? 
@@ -53,10 +52,10 @@ const columns = [
                             <div className='text-warning'><i className="bi bi-patch-exclamation"></i> Partiel</div>         
                 : <div className='text-danger'><i className="bi bi-patch-minus-fill"></i> Impayé</div>
   } },
+  { header: 'Montant TTC', accessor: 'prix_ttc' },
   { header: 'Marque', accessor: 'marque' },
   { header: 'Details', accessor: '', 
     render : (clmns: Column[], dataLine: DemandeServiceEntity)=>{ 
-      console.log(dataLine.id_dem);
       if(dataLine.id_dem)
       return <SeeDetails id={dataLine.id_dem}/>;
       return null;
@@ -86,7 +85,6 @@ const JournalService: FC = () => {
   const fetchDemandeList = async (start?: number, rowCpt?: number): Promise<FetchType> => {
     try {
       const response = await DemandeServiceServices.GetListDemandeService(`${ApiUrls.DEMANDE_SERVICE}?searchBy=${searchBy}&searchValue=${searchValue}&start=${start}&rowCpt=${rowCpt}`);
-      console.log("response ", response)
       setDemandeList(() : DemandeServiceEntity[] => {
         return response.demandeServiceList.map((dmn)=> {
           return {...dmn, date_demande: new Date(dmn.date_demande).toLocaleDateString('en-US') }
@@ -141,7 +139,7 @@ const JournalService: FC = () => {
                   name="choixRecherche"
                   id="rech_par"
                   aria-label="Default select example"
-                  value={searchBy}
+                  value={searchBy} 
                   onChange={(e) => setSearchBy(e.target.value)}
                 >
                   <option value="" disabled selected>Recherche par</option>
