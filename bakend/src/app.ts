@@ -10,6 +10,7 @@ import familleRoutes from "./routes/familleRoutes";
 import cors from "cors";
 import employeeRoutes from "./routes/employeeRoutes";
 
+
 const app: Express = express();
 require('dotenv').config();
 
