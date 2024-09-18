@@ -9,6 +9,8 @@ import Pagination from '../../components/pagination/Pagination';
 import { FetchType, InputFieldConfig } from 'src/util/types';
 import GenericTable from '../../components/table/GenericTable';
 import { useNavigate } from 'react-router-dom';
+import ServiceEntity from '../../entities/ServiceEntity';
+import Article from '../../entities/Article';
 
 
 interface SeeDeatailsProps {
@@ -19,8 +21,8 @@ const SeeDetails :FC<SeeDeatailsProps> = ({ id })=> {
   console.log("id from navigate " + id)
   const navigate = useNavigate();
 
-  return <button onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className='btn btn-primary w-100'>
-            <i className="bi bi-receipt-cutoff"></i>
+  return <button onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className='btn btn-primary w-100 p-0'>
+            <i onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className="bi bi-receipt-cutoff"></i>
     </button>
 }
 
@@ -35,7 +37,7 @@ interface Column {
     min: number;
     max: string;
   };
-  render? : (line?: Column[], dataLine?: InputFieldConfig) => ReactElement;
+  render? : (line?: Column[], dataLine?: ServiceEntity | Article) => ReactElement;
 }
 
 const columns = [
@@ -45,10 +47,8 @@ const columns = [
   { header: 'Employeur', accessor: 'employer' },
   { header: 'Payé', accessor: 'payer',  
     render : (clmns: Column[], dataLine: DemandeServiceEntity) : ReactElement=> {
-      console.log(clmns);
-      console.log("item  ", dataLine);
       return dataLine[clmns[4].accessor] == 1? 
-                            <div className='text-success'><i className="bi bi-patch-check-fill"></i> Payee</div> 
+                            <div className='text-success'><i className="bi bi-patch-check-fill "></i> Payee</div> 
              : dataLine[clmns[4].accessor] == 2 ?
                             <div className='text-warning'><i className="bi bi-patch-exclamation"></i> Partiel</div>         
                 : <div className='text-danger'><i className="bi bi-patch-minus-fill"></i> Impayé</div>

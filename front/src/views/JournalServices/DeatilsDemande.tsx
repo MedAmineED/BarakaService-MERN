@@ -29,7 +29,7 @@ const DetailsService: React.FC = () => {
 
   useEffect(()=>{
     if(demandeService?.ligneDemandes){
-      alert("Remarque\n\nCette section est en cours de développement et n'est pas encore terminée. Des éléments doivent encore être corrigés");
+      // alert("Remarque\n\nCette section est en cours de développement et n'est pas encore terminée. Des éléments doivent encore être corrigés");
        setLigneDemandes(demandeService?.ligneDemandes)
     }
   }, [demandeService])

@@ -6,7 +6,7 @@ import ServiceList from "../views/servicesview/ServiceList";
 import NavBarCmp from "../components/NavBarCmp";
 import { useRoutes, RouteObject } from "react-router-dom";
 import EmployeeList from "../views/employee/EmployeeList";
-import DemandeService from "../views/demandeservice/DemandeService";
+import MainDemandeService from "../views/demandeservice/MainDemandeService";
 import LoginForm from "../views/login/Login";
 import DevisList from "../views/devis/DevisList";
 import JournalService from "../views/JournalServices/JournalServices";
@@ -44,7 +44,7 @@ const Router: React.FC = () => {
         },
         {
           path: "demandeservice",
-          element: <DemandeService />,
+          element: <MainDemandeService />,
         },
         {
           path: "journalservice",

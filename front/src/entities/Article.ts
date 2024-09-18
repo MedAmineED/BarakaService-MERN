@@ -1,6 +1,6 @@
 
 interface Article {
-    id?: number;
+    id?: number; 
     identification: string;
     designation: string;
     qte: number;

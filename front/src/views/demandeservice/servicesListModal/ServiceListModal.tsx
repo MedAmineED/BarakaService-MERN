@@ -1,37 +1,55 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import GenericTable from '../../../components/table/GenericTable'
-import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
+import React, { FC, useEffect, useState, useMemo, useCallback, ReactElement, ChangeEvent } from 'react'
 import CustomModal from '../../../components/customModal/CustomModal'
 import { FetchType } from '../../../util/types';
 import ServiceEntity from '../../../entities/ServiceEntity';
 import ServicesServices from '../../../ApiServices/ServicesServices';
 import ApiUrls from '../../../ApiUrl/ApiUrls';
 import Pagination from '../../../components/pagination/Pagination';
+import Article from '../../../entities/Article';
+import CustomCheckbox from '../customCheckBox/CustomCheckbox';
+import TableInput from '../tableInput/TableInput';
+// import { Checkbox } from 'react-bootstrap';
 
-const columns = [
-  { header: 'Libelle', accessor: 'libelle' },
-  { header: 'Prix', accessor: 'pu' },
-  { header: 'Remise', accessor: 'remise' , isInput : {
-                                                  type : "number",
-                                                  min : 0,
-                                                  max : 'pu'
-                                                }
-  },
-];
+type Item = ServiceEntity | Article;
 
+
+//---type of Column of the table -----
+interface Column {
+  header: string;
+  accessor: string;
+  defaultValue?: number;
+  isInput?: {
+    type: string;
+    min: number;
+    max: string;
+  };
+  render? : (line?: Column[], dataLine?: Item) => ReactElement;
+}
+
+
+//----------------------------------------------------------------
+//---- Principle Component ----
+//----------------------------------------------------------------
+//---- propos of the principle component ----
 interface SrvModalProps {
-  checkAction: (check: boolean, service: ServiceEntity) => void;
   onSaveItems: () => void;
   selectedServices: ServiceEntity[];
   resetData: () => void;
 }
 
-const ServiceListModal: FC<SrvModalProps> = ({ checkAction, onSaveItems, selectedServices, resetData }) => {
+
+
+//---- modal component ----
+const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, resetData }) => {
   const [serviceList, setServiceList] = useState<ServiceEntity[]>([]);
   const [searchBy, setSearchBy] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
 
+
   console.log("modale service");
+
 
   const handleSearch = async () => {
     await fetchServiceList();
@@ -56,7 +74,25 @@ const ServiceListModal: FC<SrvModalProps> = ({ checkAction, onSaveItems, selecte
     fetchServiceList(0, 50);
   }, [fetchServiceList]);
 
-  const memoizedColumns = useMemo(() => columns, []);
+
+  const columns = [
+    {
+      header: '',
+      accessor: '',
+      render: (clm: Column[], item: ServiceEntity | Article) => {
+        return <CustomCheckbox item={item} />;
+      }, 
+    },
+    { header: 'Libelle', accessor: 'libelle' },
+    { header: 'Prix', accessor: 'pu' }, 
+    { 
+      header: 'Remise', 
+      accessor: 'remise',
+      render: (clm: Column[], item: ServiceEntity | Article) =>{
+        return <TableInput item={item} attribute='remise'/>;
+      }
+    },
+  ];
 
   return (
     <CustomModal
@@ -82,7 +118,7 @@ const ServiceListModal: FC<SrvModalProps> = ({ checkAction, onSaveItems, selecte
               <option value="Libelle">Libelle</option>
               <option value="PU">PU</option>
               <option value="Remise">Remise</option>
-            </select>
+            </select> 
           </div>
           <div className="col-6">
             <div className="input-group">
@@ -105,8 +141,7 @@ const ServiceListModal: FC<SrvModalProps> = ({ checkAction, onSaveItems, selecte
       </div>
       <GenericTable
         data={serviceList}
-        columns={memoizedColumns}
-        onCheckedItemsChange={checkAction}
+        columns={columns}
         selectedItems={selectedServices}
       />
       <Pagination

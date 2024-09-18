@@ -33,7 +33,8 @@ export const useDemandeService = () => {
   const [articlesState, setArticlesState] = useState<Article[]>([]);
 
 
-  const handleItemChange = useCallback((check: boolean, item: Item) => {
+  const handleCheckItemChange = useCallback((check: boolean, item: Item) => {
+    console.log(item)
     const stateUpdater = ((item as ServiceEntity).libelle || (item as LigneDemande).id.type == "service") ? setServicesState : setArticlesState;
     stateUpdater((prevState: any[]) => {
       if (check) {
@@ -66,7 +67,7 @@ export const useDemandeService = () => {
     servicesState,
     articlesState,
     ligneDemandeArr,
-    handleItemChange,
+    handleCheckItemChange,
     reset
   };
 };

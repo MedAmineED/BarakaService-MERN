@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, ReactElement, useEffect, useState } from 'react';
+import React, { FC, ReactElement } from 'react';
 import EditButton from '../actionButton/EditButton';
 import DeleteButton from '../actionButton/DeleteButton';
 import { InputFieldConfig } from 'src/util/types';
-import { Form } from 'react-bootstrap';
 import './style.css';
 
 interface Column {
@@ -27,8 +26,15 @@ interface GenericTableProps {
   onDelete?: (id: number) => Promise<void>;
   fetchById?: (id: number) => Promise<any>;
   onCheckedItemsChange?: (check: boolean, service: any) => void;
+  func? : (...args: any[])=> any;
 }
 
+
+
+
+//----------------------------------------------------------------
+//----- Principal Component
+//----------------------------------------------------------------
 const GenericTable: FC<GenericTableProps> = ({
   data,
   columns,
@@ -36,30 +42,8 @@ const GenericTable: FC<GenericTableProps> = ({
   onEdit,
   onDelete,
   fetchById,
-  onCheckedItemsChange,
-  selectedItems
+  selectedItems,
 }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
-
-  useEffect(() => {
-    const newCheckedItems: { [key: number]: boolean } = {};
-    if (selectedItems) {
-      selectedItems.forEach(item => {
-        newCheckedItems[item.id] = true;
-      });
-    }
-    setCheckedItems(newCheckedItems);
-  }, [selectedItems]);
-
-  const handleCheckboxChange = (item: any) => {
-    const isChecked = !checkedItems[item.id];
-    if (onCheckedItemsChange) {
-      onCheckedItemsChange(isChecked, item);
-    }
-  };
-
-
-
   // Sort data so that selected items appear first
   const sortedData = [...data].sort((a, b): number => {
     if (selectedItems) {
@@ -74,8 +58,8 @@ const GenericTable: FC<GenericTableProps> = ({
     <div className="table-responsive" id="tab-pag">
       <table className="TabContenu table table-sm" id="iTabContenu">
         <thead className="thead-fixed">
+
           <tr>
-            {onCheckedItemsChange && <th></th>}
             {columns.map((column, index) => (
               <th key={index} className="text-center align-middle">{column.header}</th>
             ))}
@@ -85,30 +69,12 @@ const GenericTable: FC<GenericTableProps> = ({
         <tbody>
           {sortedData.map((item, rowIndex) => (
             <tr key={item.id || rowIndex}>
-              {onCheckedItemsChange && (
-                <td className="check-cell">
-                  <Form.Check
-                    checked={checkedItems[item.id] || false}
-                    onChange={() => handleCheckboxChange(item)}
-                    type="checkbox"
-                  />
-                </td>
-              )}
               {/* generate columns(simple columns or inputs columns) */}
               {columns.map((column, colIndex) => (
-                column.isInput ? (
-                  <td key={colIndex}>
-                    {/* input columns */}
-                    <input
-                      type={column.isInput.type}
-                      value={column.defaultValue? column.defaultValue : (sortedData[item.id]?.[column.accessor] || item[column.accessor])}
-                      min={column.isInput.min}
-                      onChange={(e) => {}}
-                    />
-                  </td>
-                ) : 
                 column.render? (
-                  column.render(columns, item)
+                  <td className='text-center align-middle'>
+                    {column.render(columns, item as any)}
+                  </td>
                 ):
                 (
                   // simple columns

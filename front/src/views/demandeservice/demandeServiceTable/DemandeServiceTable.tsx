@@ -1,40 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useEffect } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { Table, Row, Col } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './style.css';
+import { SelectedItmsContext } from '../../../contexts/Contexts';
+import LigneDemande from 'src/entities/LigneDemande';
 
 interface Column {
   header: string;
   accessor: string;
 }
 
+const columns : Column[] = [
+  { header: 'libelle', accessor: 'designation' },
+  { header: 'prix unitaire', accessor: 'prix' },
+  { header: 'quantite', accessor: 'quantite' },
+  { header: 'prix HT', accessor: 'prix' },
+  { header: 'remise U', accessor: 'remise' },
+  { header: 'tax', accessor: 'tax' },
+  { header: 'tax total', accessor: 'tax_total' },
+  { header: 'prix TTC', accessor: 'prix_TTC' },
+];
 
 interface DemandeServiceTableProps {
-  data: { [key: string]: any; }[];
-  columns: Column[];
-  srv: any;
-  onDelete: (item : number) => void;
   getPrixTTC : (ttc : number)=> void
 }
 
-const DemandeServiceTable: FC<DemandeServiceTableProps> = ({ 
-  data, 
-  columns, 
-  onDelete,
+const DemandeServiceTable: FC<DemandeServiceTableProps> = ({
   getPrixTTC
 }) => {
+  const context = useContext(SelectedItmsContext);
+  const { ligneDemandeListe, removeItemSelect, removeItemSelectXbutton } = context;
   // Calculate totals
   const totals = {
-    montant_HT: data.reduce((sum, item) => sum + (item.prix_HT || 0), 0),
-    remise_total: data.reduce((sum, item) => sum + (item.remise_U || 0), 0),
-    montant_TVA: data.reduce((sum, item) => sum + (item.tax_total || 0), 0),
-    montant_TTC: data.reduce((sum, item) => sum + (item.prix_TTC || 0), 0),
+    montant_HT: 0,
+    remise_total: 0,
+    montant_TVA: 0,
+    montant_TTC: 0,
+  };
+
+  const onDelete = (item: LigneDemande) => {
+    console.log(item)
+    removeItemSelectXbutton(item);
+    getPrixTTC(totals.montant_TTC);
   };
 
   useEffect(()=> {
     getPrixTTC(totals.montant_TTC);
-  }, [data])
+  }, [ligneDemandeListe])
 
   return (
     <div className="table-demande-service">
@@ -49,7 +62,7 @@ const DemandeServiceTable: FC<DemandeServiceTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((item, rowIndex) => (
+            {ligneDemandeListe.map((item, rowIndex) => (
               <tr key={item.id || rowIndex}>
                 <td className="text-center">
                   <i onClick={() => onDelete(item)} className="bi bi-x-circle text-danger" style={{ cursor: 'pointer' }}></i>
