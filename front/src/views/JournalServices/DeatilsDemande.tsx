@@ -46,15 +46,18 @@ const DetailsService: React.FC = () => {
     let totalTTC = 0;
 
     ligneDemandes.forEach((ld) => {
+      //--- calculate totals for each ligneDemande ---
       const prixAfterRemise = ld.prix - (ld.remise || 0);
-      const tax = (prixAfterRemise * (ld.tva || 0)) / 100;
+      const tax = ((prixAfterRemise * (ld.tva || 0)) / 100) * ld.quantite;
       const ttc = prixAfterRemise * ld.quantite + tax;
 
+      //--- update values for the global Totals ---
       totalRemise += ld.remise || 0;
       totalTax += tax;
       totalTTC += ttc;
     });
 
+    //--- update the global state of Totals ---
     setTotals({
       totalRemise,
       totalTax,
@@ -72,7 +75,7 @@ const DetailsService: React.FC = () => {
             </div>
 
             <div className="row">
-              <div className="col-lg-9">
+              <div className="col-lg-10">
                 <div className="invoice-header"></div>
                 
                 {/*---- Details ----*/}
@@ -93,8 +96,9 @@ const DetailsService: React.FC = () => {
                         <tbody>
                           {ligneDemandes.map((ld, index) => {
                             const prixAfterRemise = ld.prix - (ld.remise || 0);
-                            const tax = (prixAfterRemise * (ld.tva || 0)) / 100;
-                            const ttc = prixAfterRemise * ld.quantite + tax;
+                            const taxU = (prixAfterRemise * (ld.tva || 0)) / 100;
+                            const taxT = taxU * (ld.quantite);
+                            const ttc = prixAfterRemise * ld.quantite + taxT;
 
                             return (
                               <tr key={index}>
@@ -108,11 +112,13 @@ const DetailsService: React.FC = () => {
                                 <td className="text-right align-middle">
                                   {ld.remise} DT
                                   <br />
-                                  <small className="text-muted">Total: {ld.remise}</small>
+                                  <small className="text-muted">Unitaire: {(ld.remise / ld.quantite).toFixed(3)} DT</small>
                                   </td>
                                 
                                 <td className="text-right align-middle">
-                                  {tax.toFixed(3)} DT
+                                  {taxT.toFixed(3)} DT
+                                  <br />
+                                  <small className="text-muted">Unitaire: {taxU} DT</small>
                                   <br />
                                   <small className="text-muted">TVA: {ld.tva}%</small>
                                   </td>
@@ -213,14 +219,14 @@ const DetailsService: React.FC = () => {
               </div>
 
               {/*---- general informations ----- */}
-              <div className="col-lg-3">
-                <div className="card mb-4">
-                  <div className="card-body">
-                    <p><strong>Informations</strong></p>
-                    <p>Matricule: {demandeService?.matricule}</p>
-                    <p>Conducteur: {demandeService?.conducteur}</p>
-                    <p>Demandeur: {demandeService?.employer}</p>
-                    <p>Client: {demandeService?.client}</p>
+              <div className="col-lg-2">
+                <div className="card mb-4 dem-info-container">
+                  <div className="card-body demande-global-info">
+                    <h6 className="text-start"><strong>Informations</strong></h6>
+                    <p className="text-start"><strong>Matricule:</strong> <br/> {demandeService?.matricule}</p>
+                    {demandeService?.conducteur && <p><strong>Conducteur:</strong> <br/> {demandeService?.conducteur}</p>}
+                    {demandeService?.client && <p><strong>Client:</strong> {demandeService?.client}</p>}
+                    <p className="text-start"><strong>Emplyee:</strong> {demandeService?.employer}</p>
                   </div>
                 </div>
               </div>
