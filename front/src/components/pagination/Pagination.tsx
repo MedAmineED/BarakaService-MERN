@@ -12,6 +12,7 @@ const Pagination: React.FC<PaginationComponentProps> = ({ onPageChange }) => {
         rowCpt: 50,
         totalCount: 0,
         pageCount: 0,
+        currentPage : 1,
     });
 
     const prevPaginationRef = useRef(pagination);
@@ -32,6 +33,7 @@ const Pagination: React.FC<PaginationComponentProps> = ({ onPageChange }) => {
         setPagination((prevPagination) => ({
             ...prevPagination,
             start: (page - 1) * prevPagination.rowCpt,
+            currentPage : page,
         }));
     };
 
@@ -89,7 +91,7 @@ const Pagination: React.FC<PaginationComponentProps> = ({ onPageChange }) => {
                         <button
                             type="button"
                             className="btn btn-light"
-                            onClick={() => handleChangePage(1)}
+                            onClick={() => handleChangePage(pagination.currentPage - 1)}
                             disabled={pagination.start === 0}
                         >
                             Prev
@@ -101,7 +103,7 @@ const Pagination: React.FC<PaginationComponentProps> = ({ onPageChange }) => {
                             <li key={page} className="page-item pagin">
                                 <button
                                     type="button"
-                                    className="btn btn-light"
+                                    className={pagination.currentPage == page? "btn btn-primary":"btn btn-light"}
                                     onClick={() => handleChangePage(page)}
                                 >
                                     {page}
@@ -113,7 +115,7 @@ const Pagination: React.FC<PaginationComponentProps> = ({ onPageChange }) => {
                         <button
                             type="button"
                             className="btn btn-light"
-                            onClick={() => handleChangePage(Math.min(pagination.pageCount, Math.ceil(pagination.start / pagination.rowCpt) + 1))}
+                            onClick={() => handleChangePage(pagination.currentPage + 1)}
                             disabled={pagination.start + pagination.rowCpt >= pagination.totalCount}
                         >
                             Next

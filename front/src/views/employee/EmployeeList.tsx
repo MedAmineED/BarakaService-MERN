@@ -14,7 +14,12 @@ import GenericTable from '../../components/table/GenericTable';
 const columns = [
   { header: 'CIN', accessor: 'cin' },
   { header: 'Nom', accessor: 'nom' },
-  { header: 'Date de Recrutement', accessor: 'recrutement' },
+  { header: 'Date de Recrutement', accessor: 'recrutement',
+    render: (undefined, item: Employee) => {
+    const formatDate = (item.recrutement + "").split('T')[0];
+      return <span>{formatDate}</span>;
+    },
+   },
   { header: 'Mobile', accessor: 'mobile' },
   { header: 'Salaire', accessor: 'salaire' },
 ];

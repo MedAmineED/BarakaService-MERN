@@ -17,6 +17,7 @@ import VehiculeForm from './vehiculeForm/VehiculeForm';
 import ClientForm from './clientForm/ClientForm';
 import EmployeeForm from './employeeForm/EmployeeForm';
 import { SelectedItmsContext } from '../../contexts/Contexts';
+import CustomService from './customService/CustomService';
 
 
 
@@ -94,8 +95,6 @@ const DemandeService: FC = () => {
 
 
   const addDemandeService = useCallback(async () => {
-    console.log(validateForm())
-    console.log(errors)
     if (!validateForm()) return;
 
     try {
@@ -143,29 +142,7 @@ const DemandeService: FC = () => {
   ), []);
 
   const memoizedCustomServiceModal = useMemo(() => (
-    <CustomModal 
-        title={'Ajouter Service'} 
-        textButton={'Ajouter service'} 
-        onSave={() =>{}}
-    >
-      <div className="d-flex justify-content-center gap-3 align-items-center flex-column">
-          <CustomInput
-            label="Nom Service"
-            id="nom-service"
-            placeholder="nom servcice..."
-            value={""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>{ console.log(e.target.value);}}
-          />
-          <CustomInput
-            label="Prix Service"
-            id="prix-service"
-            type='number'
-            min={0}
-            value={0}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>{ console.log(e.target.value);}}
-          />
-      </div>
-    </CustomModal>
+    <CustomService/>
   ), []);
 
   return (

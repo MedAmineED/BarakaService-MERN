@@ -5,7 +5,6 @@ import { Op } from 'sequelize';
 
 // Create a Service
 export const createService = async (req: Request, res: Response) => {
-    console.log("add req : ", req.body);
     try {
         const service = await Service.create(req.body);
         res.status(201).json(service);
@@ -111,6 +110,7 @@ export const updateService = async (req: Request, res: Response) => {
             res.status(404).json({ error: 'Service not found' });
         }
     } catch (error) {
+        console.log("update failed", error);
         res.status(500).json({ error: 'Failed to update service' });
     }
 };
@@ -127,6 +127,7 @@ export const deleteService = async (req: Request, res: Response) => {
             res.status(404).json({ error: 'Service not found' });
         }
     } catch (error) {
+        console.log("failed delete service", error);
         res.status(500).json({ error: 'Failed to delete service' });
     }
 };

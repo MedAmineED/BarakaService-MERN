@@ -5,7 +5,7 @@ import Article from '../entities/Article';
 import LigneDemande from '../entities/LigneDemande';
 
 
-type Item = ServiceEntity | Article;
+type Item = ServiceEntity | Article | { libelle: string; prix: number};
 
 interface MainSelectedContextProps {
     children: React.ReactNode;
@@ -39,10 +39,11 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
 
     //------- add to ligneDemande
     const transformFromItemToLigneDemande = (item: Item): LigneDemande | void => {
+        console.log(item)
         let ligne: LigneDemande | null = null;
      
         // Check if the item is a service
-        if ('libelle' in item) {
+        if (('libelle' in item) && item.id) {
             ligne = {
                 demande_srv: 0,
                 type: "service",

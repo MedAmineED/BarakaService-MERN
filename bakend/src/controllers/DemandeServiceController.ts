@@ -17,8 +17,6 @@ export const createDemandeService = async (req: Request, res: Response) => {
         const dateTime = `${date}`;
 
         const { lignedemande, ...demandeServiceData } = req.body;
-
-        console.log("before check if lignes empty : ", lignedemande);
         // Check if lignedemande is not empty
         if (!lignedemande || lignedemande.length === 0) {
             console.log({ error: 'LigneDemande cannot be empty' })

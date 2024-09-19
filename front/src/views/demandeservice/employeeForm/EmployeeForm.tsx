@@ -46,20 +46,16 @@ const EmployeeForm: FC<EmployeeFormProps> = ({ formData, handleChange, errors })
                   <option value="" disabled>Sélectionner un Employé</option> {/* Default option */}
                   {
                     employee.map((emp: Employee) => (
-                      <option key={emp.id} value={emp.id}>{emp.nom}</option>
+                      <option key={emp.id} value={emp.nom}>{emp.nom}</option>
                     ))
                   }
-                  <option value="employe1">Employé 1</option>
-                  <option value="employe2">Employé 2</option>
-                  <option value="employe3">Employé 3</option>
-                  {/* Add more options dynamically if needed */}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">{errors.employer}</Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId="heure_deb" className="mb-2 input-container">
                 <Form.Label>Heure Début</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="time"
                   size="sm"
                   placeholder="Saisir Heure Début"
                   value={formData.heure_deb}
@@ -71,7 +67,7 @@ const EmployeeForm: FC<EmployeeFormProps> = ({ formData, handleChange, errors })
               <Form.Group controlId="heure_fin" className="mb-2 input-container">
                 <Form.Label>Heure Fin</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="time"
                   size="sm"
                   placeholder="Saisir Heure Fin"
                   value={formData.heure_fin}
