@@ -47,7 +47,7 @@ const DetailsService: React.FC = () => {
 
     ligneDemandes.forEach((ld) => {
       const prixAfterRemise = ld.prix - (ld.remise || 0);
-      const tax = (prixAfterRemise * (ld.tax || 0)) / 100;
+      const tax = (prixAfterRemise * (ld.tva || 0)) / 100;
       const ttc = prixAfterRemise * ld.quantite + tax;
 
       totalRemise += ld.remise || 0;
@@ -93,7 +93,7 @@ const DetailsService: React.FC = () => {
                         <tbody>
                           {ligneDemandes.map((ld, index) => {
                             const prixAfterRemise = ld.prix - (ld.remise || 0);
-                            const tax = (prixAfterRemise * (ld.tax || 0)) / 100;
+                            const tax = (prixAfterRemise * (ld.tva || 0)) / 100;
                             const ttc = prixAfterRemise * ld.quantite + tax;
 
                             return (
@@ -105,8 +105,17 @@ const DetailsService: React.FC = () => {
                                 </td>
                                 <td className="text-right align-middle">{ld.prix} DT</td>
                                 <td className="text-right align-middle">{ld.quantite}</td>
-                                <td className="text-right align-middle">{ld.remise} DT</td>
-                                <td className="text-right align-middle">{tax.toFixed(3)} DT</td>
+                                <td className="text-right align-middle">
+                                  {ld.remise} DT
+                                  <br />
+                                  <small className="text-muted">Total: {ld.remise}</small>
+                                  </td>
+                                
+                                <td className="text-right align-middle">
+                                  {tax.toFixed(3)} DT
+                                  <br />
+                                  <small className="text-muted">TVA: {ld.tva}%</small>
+                                  </td>
                                 <td className="text-right align-middle">{ttc.toFixed(3)} DT</td>
                               </tr>
                             );

@@ -121,7 +121,7 @@ const DemandeService: FC = () => {
   },[ligneDemandeListe]);
 
   useEffect(() => {
-    setFormData((prevData) => ({...prevData, prix_ttc: totals.montant_TTC}));
+    setFormData((prevData) => ({...prevData, prix_ttc: parseFloat((totals.montant_TTC).toFixed(3))}));
   }, [totals]);
 
 
