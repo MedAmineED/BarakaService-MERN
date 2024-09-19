@@ -7,12 +7,11 @@ import ApiUrls from '../../ApiUrl/ApiUrls';
 import LigneDemande from '../../entities/LigneDemande';
 import './detailsStyle.css';
 
-
 const DetailsService: React.FC = () => {
-  const [demandeService, setDemandeService] = useState<DemandeServiceEntity | null>({});
-  const [ligneDemandes, setLigneDemandes] = useState<LigneDemande[] | []>([]);
-  const [paiementMethod, setMethodState] = useState<string> ("espece")
-  const [isPertiel, setIsPertiel] = useState<boolean>(false);
+  const [demandeService, setDemandeService] = useState<DemandeServiceEntity | null>(null);
+  const [ligneDemandes, setLigneDemandes] = useState<LigneDemande[]>([]);
+  const [paiementMethod, setPaiementMethod] = useState<string>('espece');
+  const [isPartiel, setIsPartiel] = useState<boolean>(false);
   const [totals, setTotals] = useState({
     totalRemise: 0,
     totalTax: 0,
@@ -24,37 +23,32 @@ const DetailsService: React.FC = () => {
 
   const fetchDemandeList = async (): Promise<void> => {
     try {
-      console.log("iddddd: ", id)
       const response = await DemandeServiceService.GetDemandeServiceById(`${ApiUrls.DEMANDE_SERVICE}`, id);
-      console.log("response ", response);
       setDemandeService(response);
     } catch (err) {
-      console.log("Error fetching data:", err);
+      console.error('Error fetching data:', err);
     }
   };
 
-  useEffect(()=>{
-    if(demandeService?.ligneDemandes){
-      // alert("Remarque\n\nCette section est en cours de développement et n'est pas encore terminée. Des éléments doivent encore être corrigés");
-       setLigneDemandes(demandeService?.ligneDemandes)
+  useEffect(() => {
+    if (demandeService?.ligneDemandes) {
+      setLigneDemandes(demandeService.ligneDemandes);
     }
-  }, [demandeService])
-  
+  }, [demandeService]);
+
   useEffect(() => {
     fetchDemandeList();
   }, [id]);
 
-
   useEffect(() => {
-    // Calculate totals
     let totalRemise = 0;
     let totalTax = 0;
     let totalTTC = 0;
 
     ligneDemandes.forEach((ld) => {
       const prixAfterRemise = ld.prix - (ld.remise || 0);
-      const tax = prixAfterRemise * (ld.tax || 0) / 100; // Assuming tax is a percentage
-      const ttc = (prixAfterRemise * ld.quantite) + tax;
+      const tax = (prixAfterRemise * (ld.tax || 0)) / 100;
+      const ttc = prixAfterRemise * ld.quantite + tax;
 
       totalRemise += ld.remise || 0;
       totalTax += tax;
@@ -68,8 +62,6 @@ const DetailsService: React.FC = () => {
     });
   }, [ligneDemandes]);
 
-  // if (!demandeService?.lignedemande) return <div>Loading...</div>;
-
   return (
     <main id="main">
       <section id="PaimentServices" className="d-flex align-items-center">
@@ -81,14 +73,13 @@ const DetailsService: React.FC = () => {
 
             <div className="row">
               <div className="col-lg-9">
+                <div className="invoice-header"></div>
                 
-              <div className="invoice-header">
-  </div>
-  <div className="ui segment cards scroll-x-auto">
-
-    <div className="ui segment itemscard">
-      <div className="content">
-      <table className="ui celled table table-striped">
+                {/*---- Details ----*/}
+                <div className="ui segment cards scroll-x-auto">
+                  <div className="ui segment itemscard">
+                    <div className="content">
+                      <table className="ui celled table table-striped">
                         <thead>
                           <tr>
                             <th>Libelle</th>
@@ -100,28 +91,26 @@ const DetailsService: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {
-                            ligneDemandes.map((ld, index) => {
-                              const prixAfterRemise = ld.prix - (ld.remise || 0);
-                              const tax = prixAfterRemise * (ld.tax || 0) / 100;
-                              const ttc = (prixAfterRemise * ld.quantite) + tax;
+                          {ligneDemandes.map((ld, index) => {
+                            const prixAfterRemise = ld.prix - (ld.remise || 0);
+                            const tax = (prixAfterRemise * (ld.tax || 0)) / 100;
+                            const ttc = prixAfterRemise * ld.quantite + tax;
 
-                              return (
-                                <tr key={index}>
-                                  <td>
-                                    {ld.designation}
-                                    <br />
-                                    <small className="text-muted">{ld.type}</small>
-                                  </td>
-                                  <td className="text-right align-middle">{ld.prix} DT</td>
-                                  <td className="text-right align-middle">{ld.quantite}</td>
-                                  <td className="text-right align-middle">{ld.remise} DT</td>
-                                  <td className="text-right align-middle">{tax.toFixed(3)} DT</td>
-                                  <td className="text-right align-middle">{ttc.toFixed(3)} DT</td>
-                                </tr>
-                              );
-                            })
-                          }
+                            return (
+                              <tr key={index}>
+                                <td>
+                                  {ld.designation}
+                                  <br />
+                                  <small className="text-muted">{ld.type}</small>
+                                </td>
+                                <td className="text-right align-middle">{ld.prix} DT</td>
+                                <td className="text-right align-middle">{ld.quantite}</td>
+                                <td className="text-right align-middle">{ld.remise} DT</td>
+                                <td className="text-right align-middle">{tax.toFixed(3)} DT</td>
+                                <td className="text-right align-middle">{ttc.toFixed(3)} DT</td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                         <tfoot className="full-width">
                           <tr>
@@ -133,43 +122,45 @@ const DetailsService: React.FC = () => {
                           </tr>
                         </tfoot>
                       </table>
+                    </div>
+                  </div>
+                </div>
 
-      </div>
-    </div>
-  </div>
-                {/* Payment section */}
+                {/* ---- Paiements ---- */}
                 <div className="card mb-4">
                   <div className="card-body">
                     <div className="row">
                       <div className="col-lg-4">
-                        <h3 className="h6"><strong>Methode de paiement</strong></h3>
+                        <h3 className="h6">
+                          <strong>Methode de paiement</strong>
+                        </h3>
                         <select
                           id="selectPaiment"
-                          className='text-primary'
-                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { setMethodState(e.target.value) }}
-                          disabled={demandeService?.payer ==1}
+                          className="text-primary"
+                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPaiementMethod(e.target.value)}
+                          disabled={demandeService?.payer === 1}
                         >
                           <option value="espece">Espece</option>
                           <option value="cheque">Cheque</option>
                         </select>
-                        {demandeService?.payer == 1 ? (
+                        {demandeService?.payer === 1 ? (
                           <span className="badge bg-success rounded-pill">PAYE</span>
                         ) : (
                           <span className="badge bg-danger rounded-pill">IMPAYE</span>
                         )}
 
-                        <div id="chequeOptions" hidden = {paiementMethod == "espece"} >
+                        <div id="chequeOptions" hidden={paiementMethod === 'espece'}>
                           <div className="form-outline">
                             <label className="form-label" htmlFor="nomBanqueInput">Banque</label>
-                            <input type="text" id="nomBanqueInput" className="form-control" disabled={false} />
+                            <input type="text" id="nomBanqueInput" className="form-control" />
                           </div>
                           <div className="form-outline mt-2">
                             <label className="form-label" htmlFor="numeroChequeInput">Numero de cheque</label>
-                            <input type="text" id="numeroChequeInput" className="form-control" disabled={false} />
+                            <input type="text" id="numeroChequeInput" className="form-control" />
                           </div>
                           <div className="form-outline mt-2">
                             <label className="form-label" htmlFor="dateChequeInput">Date de cheque</label>
-                            <input type="text" id="dateChequeInput" className="form-control" disabled={false} />
+                            <input type="text" id="dateChequeInput" className="form-control" />
                           </div>
                           <div className="form-check mt-2">
                             <input className="form-check-input" type="checkbox" id="chequeSansSolde" />
@@ -179,36 +170,25 @@ const DetailsService: React.FC = () => {
                       </div>
 
                       <div className="col-lg-4 d-flex flex-column">
-                        <h3 className="h6"><strong>Paiement partiel ou total</strong></h3>
+                        <h3 className="h6">
+                          <strong>Paiement partiel ou total</strong>
+                        </h3>
                         <select
                           id="typePaiment"
-                          className='text-primary'
-                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => { setIsPertiel(e.target.value == "partiel") }}
-                          disabled={false}
+                          className="text-primary"
+                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setIsPartiel(e.target.value === 'partiel')}
                         >
                           <option value="totale">Totale</option>
                           <option value="partiel">Partiel</option>
                         </select>
-                        <div className="form-outline" id="montantInput" hidden = {!isPertiel}>
+                        <div className="form-outline" id="montantInput" hidden={!isPartiel}>
                           <label className="form-label" htmlFor="montantInputField">Montant</label>
-                          <input
-                            type="number"
-                            max={10}
-                            min={0}
-                            className="form-control"
-                            id="montantInputField"
-                            disabled={false}
-                          />
+                          <input type="number" className="form-control" id="montantInputField" />
                           <small className="text-danger" id="prixMaxErr" hidden>
-                            le prix maximale est {20000} DT
+                            Le prix maximale est 20000 DT
                           </small>
                         </div>
-                        <button
-                          type="button"
-                          className="btn btn-success btn-lg mt-3"
-                          onClick={() => {/* Handle payment action */ }}
-                          disabled={false}
-                        >
+                        <button type="button" className="btn btn-success btn-lg mt-3">
                           Payer <i className="bi bi-cash"></i>
                         </button>
                       </div>
@@ -223,16 +203,15 @@ const DetailsService: React.FC = () => {
                 </div>
               </div>
 
+              {/*---- general informations ----- */}
               <div className="col-lg-3">
                 <div className="card mb-4">
                   <div className="card-body">
                     <p><strong>Informations</strong></p>
                     <p>Matricule: {demandeService?.matricule}</p>
                     <p>Conducteur: {demandeService?.conducteur}</p>
+                    <p>Demandeur: {demandeService?.employer}</p>
                     <p>Client: {demandeService?.client}</p>
-                    <p>Marque: {demandeService?.marque} </p>
-                    <p>Heure debut: {demandeService?.heure_deb} h</p>
-                    <p>Heure fin: {demandeService?.heure_fin} h</p>
                   </div>
                 </div>
               </div>
