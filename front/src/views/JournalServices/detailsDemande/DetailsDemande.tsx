@@ -148,7 +148,7 @@ const DetailsService: React.FC = () => {
             <div className="d-flex justify-content-between align-items-center py-3">
               <h2 className="h5 mb-0">Numero de Commandes #{demandeService?.id_dem}</h2>
             </div>
-            <div className="row mb-3 border flex align-items-center">
+            <div className="row mb-3 border pt-2 flex align-items-center">
               <div className="col-md-4">
                 <p className="details-info">
                   <strong>Date Demande: </strong>

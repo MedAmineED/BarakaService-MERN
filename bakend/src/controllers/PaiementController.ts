@@ -31,9 +31,12 @@ export const paiementOperation = async (req: Request, res: Response): Promise<vo
         console.log("requiredPaiment : ", requiredPaiment?.dataValues.prix_ttc);
         console.log("current paiment : ", (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")));
 
-        if(requiredPaiment && newPaiement > 0){
+        if(requiredPaiment && (newPaiement > 0) && (requiredPaiment.dataValues.prix_ttc >= (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")))){
             await DemandeService.update(
-                { payer: requiredPaiment.dataValues.prix_ttc == (paimentSum + newPaiement) || requiredPaiment.dataValues.prix_ttc < (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")) ? 1 : 2 },
+                { payer: 
+                        requiredPaiment.dataValues.prix_ttc == (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")) ? 
+                        1 : 
+                        2 },
                 { where: { id_dem: id } } // The second argument is the options object
             );
         }
