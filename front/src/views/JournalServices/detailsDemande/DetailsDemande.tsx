@@ -28,7 +28,7 @@ const DetailsService: React.FC = () => {
     totalTax: 0,
     totalTTC: 0,
   });
-  const [paiementSum, setPaiementSum] = useState<number>(0);
+  const [paiementSum, setPaiementSum] = useState<number>(0); 
   const [alertMessage, setAlertMessage] = useState<{
     isError : boolean,
     message: string,
@@ -86,7 +86,7 @@ const DetailsService: React.FC = () => {
     e.preventDefault();
     try {
       console.log(paiemntDetails)
-      if(paiemntDetails.montant > 0){
+      if(demandeService && paiemntDetails.montant > 0 && ((paiemntDetails.montant + paiementSum) <= demandeService?.prix_ttc)){
           await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, paiemntDetails);
           await fetchDemandeService();
           await fetchPiementsSum();
@@ -95,6 +95,12 @@ const DetailsService: React.FC = () => {
             message: 'Paiement ajouté avec succès',
           })
           // refresh the page after the paiement is added
+    }
+    else if(demandeService && (paiemntDetails.montant + paiementSum) > demandeService?.prix_ttc){
+      setAlertMessage({
+        isError: true,
+        message: 'Mantant maximale est ' + (demandeService.prix_ttc - paiementSum),
+      })
     }
     else{
       //errere : obliger d ajout mantant je bseoin un message en francais

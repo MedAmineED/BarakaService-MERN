@@ -24,7 +24,7 @@
   z-index: 1;
 }
 
-tfoot th {
+#PaimentServices tfoot th {
   bottom: 0; /* Fix footer at the bottom */
   background-color: #f9f9f9;
   z-index: 1;

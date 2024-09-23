@@ -61,6 +61,14 @@ const DemandeService: FC = () => {
   const  { ligneDemandeListe, totals, reset } = context;
   const [formData, setFormData] = useState<DemandeServiceEntity>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [alertMessage, setAlertMessage] = useState<{
+    isError : boolean,
+    message: string,
+  }>({
+    isError: false,
+    message: '',
+  });
+  const [alertIsOpen, setAlertIsOpen] = useState<boolean>(false);
 
 
 
@@ -93,11 +101,20 @@ const DemandeService: FC = () => {
 
 
   const addDemandeService = useCallback(async () => {
+    if(ligneDemandeListe.length == 0) { 
+      setAlertMessage({
+        isError: true,
+        message: 'Veuillez ajouter au moins une service ou article',
+      })
+    }
     if (!validateForm()) return;
 
     try {
       const data = await DemandeServiceService.AddDemandeService(ApiUrls.DEMANDE_SERVICE, formData);
-      
+      setAlertMessage({
+        isError: false,
+        message: 'Demande de service ajoutée avec succès !',
+      })
       console.log("demande service added successfully", data);
       resetAll();
     } catch (error) {
@@ -123,6 +140,21 @@ const DemandeService: FC = () => {
   }, [totals]);
 
 
+  useEffect(() =>{        
+    if(alertMessage.message){
+      setAlertIsOpen(true);
+      const timer = setTimeout(() => {
+          setAlertIsOpen(false);
+      }, 5000)
+
+      return () => clearTimeout(timer); 
+    }else {
+      setAlertIsOpen(false);
+    }
+
+  }, [alertMessage])
+
+
   const memoizedServiceListModal = useMemo(() => (
     <ServiceListModal
       resetData={()=>{}}
@@ -145,6 +177,9 @@ const DemandeService: FC = () => {
 
   return (
     <MainCmp>
+        <div className={`alert alert-notif z-3 right-50 position-fixed w-100 ${alertMessage.isError? "alert-danger" : "alert-success"}`} hidden= {!alertIsOpen} role="alert">
+          {alertMessage.message}
+        </div>
       <ItemHeader title="Demande service" buttonText="Ajouter Employé" onButtonClick={() => {}} />
       <Container fluid className="full-height-container">
         <Row className="mt-4 full-height-row global-container-dmn">
