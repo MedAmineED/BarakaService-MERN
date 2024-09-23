@@ -6,11 +6,12 @@ import ServiceList from "../views/servicesview/ServiceList";
 import NavBarCmp from "../components/NavBarCmp";
 import { useRoutes, RouteObject } from "react-router-dom";
 import EmployeeList from "../views/employee/EmployeeList";
-import MainDemandeService from "../views/demandeservice/MainDemandeService";
+import DemandeService from "../views/demandeservice/DemandeService";
 import LoginForm from "../views/login/Login";
 import DevisList from "../views/devis/DevisList";
 import JournalService from "../views/JournalServices/JournalServices";
-import DetailsDemande from "../views/JournalServices/DeatilsDemande";
+import DetailsDemande from "../views/JournalServices/detailsDemande/DetailsDemande";
+import MainDemandeService from "../views/demandeservice/MainDemandeService";
 
 const Router: React.FC = () => {
   const routes: RouteObject[] = [

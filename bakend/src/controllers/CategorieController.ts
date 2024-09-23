@@ -3,7 +3,6 @@ import CategorieService from '../models/CategorieService';
 
 // Create a CategorieService
 export const createCategorieService = async (req: Request, res: Response) => {
-    console.log("add req : ", req.body);
     try {
         const categorieService = await CategorieService.create(req.body);
         res.status(201).json(categorieService);

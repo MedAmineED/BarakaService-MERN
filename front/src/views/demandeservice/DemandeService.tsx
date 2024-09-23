@@ -10,8 +10,6 @@ import ArticleListModal from './ArticleListModal/ArticleListModal';
 import DemandeServiceService from '../../ApiServices/DemandeServiceService';
 import ApiUrls from '../../ApiUrl/ApiUrls';
 import DemandeServiceEntity from '../../entities/DemandeServiceEntity';
-import CustomModal from '../../components/customModal/CustomModal';
-import CustomInput from '../../components/customInput/CustomInput';
 import './style.css';
 import VehiculeForm from './vehiculeForm/VehiculeForm';
 import ClientForm from './clientForm/ClientForm';

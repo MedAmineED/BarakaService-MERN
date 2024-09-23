@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import Paiement from '../models/Paiement';
 import DemandeService from '../models/DemandeService';
+import { getDemandeServiceById } from './DemandeServiceController';
 
 // Create a Paiement
-export const createPaiement = async (req: Request, res: Response) => {
+export const createPaiement = async (req: Request, res: Response): Promise<void>  => {
     try {
         const paiement = await Paiement.create(req.body);
         res.status(201).json(paiement);
@@ -12,17 +13,67 @@ export const createPaiement = async (req: Request, res: Response) => {
     }
 };
 
+export const paiementOperation = async (req: Request, res: Response): Promise<void> => {
+    try {
+        console.log("body ")
+        console.log(req.body);
+        const id = req.params.id;
+        console.log("id : " + id)
+        const newPaiement = req.body.montant;
+        const paimentSum = await Paiement.sum('montant', {
+                                                  where: { demande_srv: req.params.id}
+                                              }) || 0;
+        console.log("paiement sum : ");
+        console.log(paimentSum);
+        const requiredPaiment = await DemandeService.findByPk(id,
+            { attributes: ["prix_ttc"] }
+        );
+        console.log("requiredPaiment : ", requiredPaiment?.dataValues.prix_ttc);
+        console.log("current paiment : ", (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")));
+
+        if(requiredPaiment && newPaiement > 0){
+            await DemandeService.update(
+                { payer: requiredPaiment.dataValues.prix_ttc == (paimentSum + newPaiement) || requiredPaiment.dataValues.prix_ttc < (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")) ? 1 : 2 },
+                { where: { id_dem: id } } // The second argument is the options object
+            );
+        }
+        if(requiredPaiment && (requiredPaiment.dataValues.prix_ttc >= (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")))){
+            console.log("detected----")
+            const paiement = await Paiement.create(req.body);
+            console.log("paiement operatio details :");
+            console.log(paiement);
+            res.status(201).json(paiement);
+        } 
+    } catch (error) {
+        console.log("error : " + error);
+        res.status(500).json({ error: 'Failed to fetch paiement opreration' });
+    }
+};
+ 
 // Get all Paiements
 export const getAllPaiements = async (req: Request, res: Response) => {
     try {
         const paiements = await Paiement.findAll({
-            include: [DemandeService] // Include associated DemandeService if needed
+            where: { demande_srv: req.params.id}
         });
         res.status(200).json(paiements);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch paiements' });
     }
 };
+
+//Get paiement Sum
+export const getPaiementSum = async (req: Request, res: Response) => {
+    try {
+        const paiementSum = await Paiement.sum('montant', {
+            where: { demande_srv: req.params.id}
+        });
+        res.status(200).json(paiementSum? paiementSum : 0);
+        return paiementSum? paiementSum : 0;
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch paiement sum' });
+    }
+}
 
 // Get a single Paiement by ID
 export const getPaiementById = async (req: Request, res: Response) => {

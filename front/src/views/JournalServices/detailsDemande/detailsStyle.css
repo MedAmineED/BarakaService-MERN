@@ -1,0 +1,48 @@
+
+
+  /* Set a max height for the table body */
+.scrollable-tbody {
+  display: block;
+  max-height: 200px; /* Adjust this height to control scrolling */
+  overflow-y: auto;
+}
+
+/* Make sure the table columns line up */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead, tfoot {
+  background-color: #f9f9f9;
+}
+
+thead th,
+tfoot th {
+  top: 0; /* Fix header at the top */
+  background-color: white;
+  z-index: 1;
+}
+
+tfoot th {
+  bottom: 0; /* Fix footer at the bottom */
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+/* Aligning column widths for consistency */
+thead th, tbody td, tfoot th {
+  width: 16.66%; /* Adjust according to the number of columns */
+  text-align: center;
+}
+
+.fixed-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: white; /* Match your table background */
+}
+
+.details-info {
+  font-size: 0.8rem;
+}
+

@@ -10,7 +10,7 @@ interface ClientFormProps {
   errors: Record<string, string>;
 }
 
-const ClientForm: FC<ClientFormProps> = ({ formData, handleChange, errors }) => (
+const ClientForm: FC<ClientFormProps> = ({ formData, handleChange, errors }) => ( 
   <div className="section">
     <div className="section-title inputs-sec-title"></div>
     <div className="inline-inputs">

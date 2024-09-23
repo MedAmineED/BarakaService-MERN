@@ -3,6 +3,11 @@ import LigneDemande from '../entities/LigneDemande';
 import ServiceEntity from '../entities/ServiceEntity';
 import Article from '../entities/Article';
 
+
+
+//----------------------------------------------------------------
+//----- select items context -------------------------------------
+//----------------------------------------------------------------
 type Item = ServiceEntity | Article;
 type Totals = {
   montant_HT: number,
@@ -24,5 +29,6 @@ export const SelectedItmsContext = createContext<{
     transformFromItemToLigneDemande: (item: Item) => void,
     reset: () => void,
   } | undefined>(undefined);
+
 
 

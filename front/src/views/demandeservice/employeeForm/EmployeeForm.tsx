@@ -57,7 +57,6 @@ const EmployeeForm: FC<EmployeeFormProps> = ({ formData, handleChange, errors })
                 <Form.Control
                   type="time"
                   size="sm"
-                  placeholder="Saisir Heure Début"
                   value={formData.heure_deb}
                   onChange={handleChange}
                   isInvalid={!!errors.heure_deb}

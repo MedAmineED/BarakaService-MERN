@@ -11,6 +11,7 @@ import {
     Default
 } from "sequelize-typescript";
 import DemandeService from "./DemandeService";
+import { Sequelize } from "sequelize";
 
 @Table({
     timestamps: false,
@@ -28,8 +29,8 @@ class Paiement extends Model {
     declare demande_srv: number;
 
     @Column({
-        type: DataType.DATE,
-        allowNull: false
+        type: DataType.DATEONLY,  
+        defaultValue: Sequelize.literal('CURRENT_DATE'),
     })
     declare date_payement: Date;
 

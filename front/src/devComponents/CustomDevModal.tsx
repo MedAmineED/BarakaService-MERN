@@ -7,7 +7,7 @@ const CustomDevModal: React.FC = ({children}) => {
     <div className='relativDiv'>
       {isOpen && <div className='devModal'>
       <h1>Custom Dev Modal</h1>
-      <p>This is a custom development modal.</p>
+      <p>This section not completed.</p>
       <button onClick={() => setIsOpen(false)}>Close</button>
     </div>}
     {children}

@@ -120,7 +120,6 @@ export const getAllDemandeServices = async (req: Request, res: Response) => {
 
 // Get a single DemandeService by ID
 export const getDemandeServiceById = async (req: Request, res: Response) => {
-    console.log("detected ........................................................................")
     try {
         const demandeService = await DemandeService.findByPk(req.params.id, {
             include: [Paiement, LigneDemande] // Include associations if needed

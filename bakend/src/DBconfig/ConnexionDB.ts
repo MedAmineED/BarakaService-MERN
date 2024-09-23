@@ -30,7 +30,7 @@ const sequelizeConnexion = new Sequelize({
 export const Connection = async () : Promise<void> => {
     try {
       await sequelizeConnexion.authenticate();
-      console.log('Connection has been established successfully.');
+      console.log('DataBase connection has been established successfully.');
       await sequelizeConnexion.sync({ alter: true }); // Sync models
     } catch (error) {
       console.error('Unable to connect to the database:', error);

@@ -63,7 +63,7 @@ export const deleteLigneDemandes = async (req: Request, res: Response) => {
         const deleted = await LigneDemande.destroy({
             where: { id_ligne: req.params.id }
         });
-        if (deleted) {
+        if (deleted) { 
             res.status(204).send();
         } else {
             res.status(404).json({ error: 'LigneDemande not found' });
