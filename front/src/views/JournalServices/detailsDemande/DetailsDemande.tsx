@@ -29,6 +29,14 @@ const DetailsService: React.FC = () => {
     totalTTC: 0,
   });
   const [paiementSum, setPaiementSum] = useState<number>(0);
+  const [alertMessage, setAlertMessage] = useState<{
+    isError : boolean,
+    message: string,
+  }>({
+    isError: false,
+    message: '',
+  });
+  const [alertIsOpen, setAlertIsOpen] = useState<boolean>(false);
 
   const location = useLocation();
   const { id } = location.state;
@@ -78,14 +86,22 @@ const DetailsService: React.FC = () => {
     e.preventDefault();
     try {
       console.log(paiemntDetails)
-      if(paiemntDetails.montant != 0){
+      if(paiemntDetails.montant > 0){
           await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, paiemntDetails);
           await fetchDemandeService();
           await fetchPiementsSum();
-          console.log('Paiement added successfully');
+          setAlertMessage({
+            isError: false,
+            message: 'Paiement ajouté avec succès',
+          })
           // refresh the page after the paiement is added
     }
     else{
+      //errere : obliger d ajout mantant je bseoin un message en francais
+      setAlertMessage({
+        isError: true,
+        message: "Erreur : Vous devez ajouter un montant valide."
+      })
       console.log("can not add paiement because it is not available");
     }
     } catch (err) {
@@ -139,9 +155,27 @@ const DetailsService: React.FC = () => {
     }))
   }, [id, paiementSum, totals.totalTTC])
 
+  useEffect(() =>{        
+    if(alertMessage.message){
+      setAlertIsOpen(true);
+      const timer = setTimeout(() => {
+          setAlertIsOpen(false);
+      }, 5000)
+
+      return () => clearTimeout(timer); 
+    }else {
+      setAlertIsOpen(false);
+    }
+
+  }, [alertMessage])
+
   return (
     <main id="main">
-      <section id="PaimentServices" className="d-flex align-items-center">
+
+      <section id="PaimentServices" className="d-flex align-items-center position-relative">
+        <div className={`alert alert-notif z-3 right-50 position-fixed w-100 ${alertMessage.isError? "alert-danger" : "alert-success"}`} hidden= {!alertIsOpen} role="alert">
+          {alertMessage.message}
+        </div>
         <div className="container-fluid">
           {/* Header Information Section */}
           <div className="container mb-4">

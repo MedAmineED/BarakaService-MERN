@@ -46,3 +46,8 @@ tfoot th {
   font-size: 0.8rem;
 }
 
+.alert-notif {
+  top: 93px;
+  right: 0;
+}
+
