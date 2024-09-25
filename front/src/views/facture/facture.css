@@ -1,0 +1,51 @@
+:root {
+    --body-font: 'Roboto', sans-serif;
+  }
+  
+  /* Bootstrap Override */
+  #invoice {
+    --bs-font-sans-serif: 'Roboto', sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 2;
+    --bs-body-color: #383735;
+    --bs-primary: #c01635;
+    --bs-primary-rgb: #c01635;
+    --bs-border-color: #eeeeee;
+  }
+
+  #invoice{
+    /* border: 5px solid #000000; */
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .header-facture {
+    border-bottom: 2px solid #c01635;
+    border-top: 2px solid #c01635;
+  }
+
+  .nom-societe{
+    font-size: 1.3em;
+    text-align: start;
+  }
+  .societe-info{
+    font-size: 0.9em;
+    text-align: start;
+  }
+  .facture-info {
+    font-size: 0.9em;
+    text-align: end;
+  }
+
+  .col-number {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+
+  .tm-col {
+    white-space: nowrap;
+  }

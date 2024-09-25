@@ -10,6 +10,7 @@ import User from "../models/User";
 import DemandeService from "../models/DemandeService";
 import LigneServices from "../models/LigneDemande";
 import Paiement from "../models/Paiement";
+import Societe from "../models/Societe";
 
 // const { Seq } = require('sequelize');
 // const User = require('../models/User');
@@ -23,7 +24,18 @@ const sequelizeConnexion = new Sequelize({
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
     port: Number(process.env.DB_PORT),
-    models: [Famille, Article, Employee, CategorieService, Service, User, DemandeService, LigneServices, Paiement],
+    models: [ 
+              Famille, 
+              Article, 
+              Employee, 
+              CategorieService, 
+              Service, 
+              User, 
+              DemandeService, 
+              LigneServices, 
+              Paiement, 
+              Societe,
+            ],
   });
 
 

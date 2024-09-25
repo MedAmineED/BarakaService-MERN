@@ -22,8 +22,23 @@ class PaiementService {
         }
     }
 
-    async PaiementOperation(endpoint: string, demId: number, paiement : Paiement): Promise<number> {
+    async AddTimbreFiscal(endpoint: string, demId: number, prixFinal : number): Promise<number> {
         try {
+            const response = await axios.post<number>(`${endpoint}/addtimbre/${demId}`, {prix_ttc : prixFinal}, {
+                headers: {
+                    Authorization: `Bearer token`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching paiement sum:", error);
+            throw error;
+        }
+    }
+
+    async PaiementOperation(endpoint: string, demId: number, prixFinale: number, paiement : Paiement): Promise<number> {
+        try {
+            await this.AddTimbreFiscal(endpoint, demId, prixFinale);
             const response = await axios.post<number>(`${endpoint}/paimentoperation/${demId}`, paiement, {
                 headers: {
                     Authorization: `Bearer token`,

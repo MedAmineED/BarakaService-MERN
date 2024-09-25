@@ -17,7 +17,8 @@ serviceRoutes.put('/:id', updateService);
 serviceRoutes.delete('/:id', deleteService);
 
 
-// Route pour ajouter plusieurs services
+// Route pour ajouter plusieurs services (just for testing)
+
 serviceRoutes.post('/all', async (req, res) => {
     try {
         // Supposons que req.body est un tableau d'services

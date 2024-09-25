@@ -17,7 +17,7 @@ const NavBarCmp: React.FC = () => {
                   <Navbar.Brand href="#home">
                     <h1 className='logo'>
                         <img
-                          src="/images/AlBarakaServices1.png" // Replace with your logo path
+                          src="/images/AlBarakaServices1.png"
                           alt="Logo"
                         />
                     </h1>

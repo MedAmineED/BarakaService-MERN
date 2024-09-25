@@ -12,6 +12,7 @@ import DevisList from "../views/devis/DevisList";
 import JournalService from "../views/JournalServices/JournalServices";
 import DetailsDemande from "../views/JournalServices/detailsDemande/DetailsDemande";
 import MainDemandeService from "../views/demandeservice/MainDemandeService";
+import Facture from "../views/facture/Facture";
 
 const Router: React.FC = () => {
   const routes: RouteObject[] = [
@@ -60,6 +61,10 @@ const Router: React.FC = () => {
           element: <DevisList />,
         },
       ],
+    },
+    {
+      path: "facture",
+      element: <Facture />,
     },
     {
       path: "/login",

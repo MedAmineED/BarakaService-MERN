@@ -45,9 +45,33 @@
 #PaimentServices .details-info {
   font-size: 0.8rem;
 }
+.btn-paiementd{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+}
+.paye-btn, .afficher-facture-btn{
+  width: 100px;
+  font-size: 0.7em;
+  font-weight: bolder;
+}
 
 .alert-notif {
   top: 93px;
   right: 0;
+}
+
+
+.timbre-fiscal, .span-fiscale{
+  background-color: rgba(255, 255, 255, 0);
+  font-size: 1em;
+  width: fit-content;
+}
+#itimbreFiscale {
+  color: black;
+  max-width: 100px;
+  max-height: 20px;
+  text-align: center;
 }
 

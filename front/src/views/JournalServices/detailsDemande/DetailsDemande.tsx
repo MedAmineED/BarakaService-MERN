@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DemandeServiceEntity from '../../../entities/DemandeServiceEntity';
 import DemandeServiceService from '../../../ApiServices/DemandeServiceService';
 import ApiUrls from '../../../ApiUrl/ApiUrls';
@@ -36,7 +36,10 @@ const DetailsService: React.FC = () => {
     isError: false,
     message: '',
   });
+  const [timbreFiscal, setTimbreFiscal] = useState<number>(0);
   const [alertIsOpen, setAlertIsOpen] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const location = useLocation();
   const { id } = location.state;
@@ -61,12 +64,23 @@ const DetailsService: React.FC = () => {
     }
   };
 
+  const timbreFiscaleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value } = e.target;
+   setTimbreFiscal(parseFloat(value));
+  }
+
+  //----ClCK EVENTS --------------------------------
+  const handleNavigateToFacture = ():void => {
+    navigate('/facture');
+  };
+
   //---API REQUESTS --------------------------------
 
   const fetchDemandeService = async (): Promise<void> => {
     try {
       const response = await DemandeServiceService.GetDemandeServiceById(`${ApiUrls.DEMANDE_SERVICE}`, id);
       setDemandeService(response);
+      console.log(demandeService);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -86,8 +100,9 @@ const DetailsService: React.FC = () => {
     e.preventDefault();
     try {
       console.log(paiemntDetails)
-      if(demandeService && paiemntDetails.montant > 0 && ((paiemntDetails.montant + paiementSum) <= demandeService?.prix_ttc)){
-          await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, paiemntDetails);
+      if(demandeService && paiemntDetails.montant > 0 && ((paiemntDetails.montant + paiementSum) <= (demandeService?.prix_ttc + timbreFiscal))){
+          await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, (timbreFiscal + demandeService.prix_ttc), paiemntDetails);
+          setTimbreFiscal(0);
           await fetchDemandeService();
           await fetchPiementsSum();
           setAlertMessage({
@@ -157,9 +172,9 @@ const DetailsService: React.FC = () => {
     setpaiemntDetails(((prv)=>{
       console.log("runned ")
       console.log(paiementSum);
-      return {...prv, demande_srv: id, montant: (parseFloat((totals.totalTTC).toFixed(3)) - paiementSum) }
+      return {...prv, demande_srv: id, montant: parseFloat(((totals.totalTTC - paiementSum) + timbreFiscal).toFixed(3)) }
     }))
-  }, [id, paiementSum, totals.totalTTC])
+  }, [id, paiementSum, totals.totalTTC, timbreFiscal])
 
   useEffect(() =>{        
     if(alertMessage.message){
@@ -186,7 +201,7 @@ const DetailsService: React.FC = () => {
           {/* Header Information Section */}
           <div className="container mb-4">
             <div className="d-flex justify-content-between align-items-center py-3">
-              <h2 className="h5 mb-0">Numero de Commandes #{demandeService?.id_dem}</h2>
+              <h2 className="h5 mb-0">Numero de Commande #{demandeService?.id_dem}</h2>
             </div>
             <div className="row mb-3 border pt-2 flex align-items-center">
               <div className="col-md-4">
@@ -216,7 +231,23 @@ const DetailsService: React.FC = () => {
                 </p>
                 <p className="details-info">
                   <strong>Prix TTC: </strong>
-                  {demandeService?.prix_ttc} DT
+                  {((demandeService?.prix_ttc || 0)+ (timbreFiscal || 0)).toFixed(3)} DT
+                </p>
+                <p className="details-info">
+                     <label 
+                        className='timbre-fiscal' 
+                        htmlFor='itimbreFiscale'
+                        >
+                        Timbre Fiscale
+                    </label>
+                   <input id='itimbreFiscale' 
+                         type="number" 
+                         min={0}
+                         value={timbreFiscal}
+                         onChange={timbreFiscaleChange}
+                         disabled={demandeService?.payer === 1 || demandeService?.payer === 2}
+                         />
+                   <span className='span-fiscale'> DT</span>
                 </p>
               </div>
               <div className="col-md-4">
@@ -224,7 +255,7 @@ const DetailsService: React.FC = () => {
                   <strong>Payee: {paiementSum}</strong>
                 </p>
                 <p className="details-info">
-                  <strong>Reste: {(totals.totalTTC - paiementSum).toFixed(3)}</strong>
+                  <strong>Reste: {((demandeService?.prix_ttc - paiementSum) + (timbreFiscal || 0)).toFixed(3) }</strong>
                 </p>
                 <p className="details-info">
                   {demandeService?.payer === 1 ? (
@@ -428,17 +459,28 @@ const DetailsService: React.FC = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                       )}
-
+                    <div className="btn-paiementd">
                       <Button
-                      type="submit"
+                        type="submit"
                         variant="success"
                         size="lg"
-                        className="mt-3"
+                        className="paye-btn mt-3"
                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => handlePaiement(e)}
                         disabled={demandeService?.payer === 1}
-                      >
+                        >
                         Payer <i className="bi bi-cash"></i>
                       </Button>
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        className="afficher-facture-btn mt-3"
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleNavigateToFacture(e)}
+                        disabled={demandeService?.payer === 1}
+                      >
+                        Facture <i className="bi bi-receipt"></i>
+                      </Button>
+                    </div>
                     </div>
                   </div>
                 </div>

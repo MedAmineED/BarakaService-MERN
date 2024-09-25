@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Paiement from '../models/Paiement';
 import DemandeService from '../models/DemandeService';
-import { getDemandeServiceById } from './DemandeServiceController';
 
 // Create a Paiement
 export const createPaiement = async (req: Request, res: Response): Promise<void>  => {
@@ -13,38 +12,44 @@ export const createPaiement = async (req: Request, res: Response): Promise<void>
     }
 };
 
+//--- update the ttc in demande service to add it timbre fiscal --
+export const addTimbreFiscal = async (req: Request, res: Response): Promise<void> =>{
+    try {
+            await DemandeService.update(
+                { prix_ttc: req.body.prix_ttc },
+                { where: { id_dem: req.params.id } } // The second argument is the options object
+            );
+            res.status(200).json({ message: 'Timbre fiscal added successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update paiement' });
+    }
+}
+
+//--- paiement operation --
 export const paiementOperation = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log("body ")
-        console.log(req.body);
         const id = req.params.id;
-        console.log("id : " + id)
         const newPaiement = req.body.montant;
-        const paimentSum = await Paiement.sum('montant', {
+        const oldPaiements = await Paiement.sum('montant', {
                                                   where: { demande_srv: req.params.id}
                                               }) || 0;
-        console.log("paiement sum : ");
-        console.log(paimentSum);
         const requiredPaiment = await DemandeService.findByPk(id,
             { attributes: ["prix_ttc"] }
         );
-        console.log("requiredPaiment : ", requiredPaiment?.dataValues.prix_ttc);
-        console.log("current paiment : ", (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")));
 
-        if(requiredPaiment && (newPaiement > 0) && (requiredPaiment.dataValues.prix_ttc >= (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")))){
+        const paiementSum = (parseFloat(oldPaiements+"") + parseFloat(newPaiement+""))
+        
+        if(requiredPaiment && (newPaiement > 0) && ((requiredPaiment.dataValues.prix_ttc) >= oldPaiements)){
             await DemandeService.update(
                 { payer: 
-                        requiredPaiment.dataValues.prix_ttc == (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")) ? 
+                        requiredPaiment.dataValues.prix_ttc == (parseFloat(paiementSum+"")) ? 
                         1 : 
                         2 },
                 { where: { id_dem: id } } // The second argument is the options object
             );
         }
-        if(requiredPaiment && (requiredPaiment.dataValues.prix_ttc >= (parseFloat(paimentSum+"") + parseFloat(newPaiement+"")))){
-            console.log("detected----")
+        if(requiredPaiment && (requiredPaiment.dataValues.prix_ttc >= (parseFloat(paiementSum+"")))){
             const paiement = await Paiement.create(req.body);
-            console.log("paiement operatio details :");
-            console.log(paiement);
             res.status(201).json(paiement);
         } 
     } catch (error) {

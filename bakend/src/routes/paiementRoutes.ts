@@ -6,7 +6,8 @@ import {
     updatePaiement,
     deletePaiement,
     getPaiementSum,
-    paiementOperation
+    paiementOperation,
+    addTimbreFiscal
 } from '../controllers/PaiementController';
 
 const paiementRoutes = Router();
@@ -14,6 +15,7 @@ const paiementRoutes = Router();
 paiementRoutes.post('/', createPaiement);
 paiementRoutes.get('/', getAllPaiements);
 paiementRoutes.get('/sum/:id', getPaiementSum);
+paiementRoutes.post('/addtimbre/:id', addTimbreFiscal);
 paiementRoutes.post('/paimentoperation/:id', paiementOperation);
 paiementRoutes.get('/:id', getPaiementById);
 paiementRoutes.put('/:id', updatePaiement);
