@@ -4,6 +4,8 @@ import './facture.css';
 import Societe from '../../entities/Societe';
 import SocieteService from '../../ApiServices/SocieteService';
 import ApiUrls from '../../ApiUrl/ApiUrls';
+import { useLocation } from 'react-router-dom';
+import LigneDemande from 'src/entities/LigneDemande';
 
 // interface FactureItem {
 //   id: number;
@@ -23,14 +25,20 @@ import ApiUrls from '../../ApiUrl/ApiUrls';
 const Facture: React.FC = () => {
 //   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
 //   const tax = subtotal * 0.2;
-//   const grandTotal = subtotal + tax;
+//   const grandTotal = subtotal + tax;4
+  const location = useLocation();
+  const { demandeService, timbreFiscal, totals } = location.state;
   const [societe, setSociete] = useState<Societe>({
       nom: "",
       adresse: "",
       tel: "",
   })
+  let cpt = 0;
 
 
+  useEffect(()=> {
+    console.log(demandeService)
+  }, [])
 
   //get societe
   const fetchSociete = async (): Promise<void> => {
@@ -111,52 +119,59 @@ const Facture: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-              <tr key={""}>
-                <th className='col-number'>{"0"}</th>
-                <td>{"description"}</td>
-                <td>{"price"}</td>
-                <td>{"price"}</td>
-                <td>{"price"}</td>
-                <td>{"price"}</td>
-                <td>{"price"}</td>
-                <td>{"1"} DT</td>
-                <td>{"500"} DT</td>
-              </tr>
-            <tr>
-              <td colSpan={7}></td>
-              <td>PHT</td>
-              <td>{"10000"} DT</td>
-            </tr>
-            <tr>
-              <td colSpan={7}></td>
-              <td>TVA</td>
-              <td>{"19%"}</td>
-            </tr>
-            <tr className='tm-col'>
-                <td colSpan={7}></td>
-                <td>
-                    <label 
-                        className='timbre-fiscal' 
-                        htmlFor='itimbreFiscale'
-                        >
-                        Timbre Fiscale
-                    </label>
-                </td>
-                <td>
-                   <input id='itimbreFiscale' 
-                         type="number" 
-                         min={0}
-                         value={0.455}
-                         />
-                    <span className='span-fiscale'> DT</span>
-                </td>
-            </tr>
-            <tr>
-              <td colSpan={7}></td>
-              <td className="text-primary fs-5 fw-bold">PTT</td>
-              <td className="text-primary fs-5 fw-bold">{11000} DT</td>
-            </tr>
+            {demandeService.ligneDemandes.map((demande : LigneDemande)=> {
+                cpt++;
+                return <tr key={demande.id}>
+                  <th className='col-number'>{cpt}</th>
+                  <td>{demande.reference}</td>
+                  <td>{demande.designation}</td>
+                  <td>{demande.prix}</td>
+                  <td>{demande.quantite}</td>
+                  <td>{demande.tva}</td>
+                  <td>{demande.remise}</td>
+                  <td>{demande.prix * demande.quantite}</td>
+                  <td>{(demande.prix * demande.quantite * (1 + (demande.tva / 100))).toFixed(3)}</td>
+                </tr>
+            })}
           </tbody>
+  <tfoot className="tfoot-small">
+    <tr>
+      <td colSpan={10}></td>
+    </tr>
+    <tr>
+      <td colSpan={7}></td>
+      <td>PHT</td>
+      <td>{"10000"} DT</td>
+    </tr>
+    <tr>
+      <td colSpan={7}></td>
+      <td>TVA</td>
+      <td>{"19%"}</td>
+    </tr>
+    <tr className='tm-col'>
+      <td colSpan={7}></td>
+      <td>
+        <label 
+          className='timbre-fiscal' 
+          htmlFor='itimbreFiscale'>
+          Timbre Fiscale
+        </label>
+      </td>
+      <td>
+        <input id='itimbreFiscale' 
+          type="number" 
+          min={0}
+          value={timbreFiscal}
+        />
+        <span className='span-fiscale'> DT</span>
+      </td>
+    </tr>
+    <tr>
+      <td colSpan={7}></td>
+      <td className="border text-primary fs-5 fw-bold">PTT</td>
+      <td className="border text-primary fs-5 fw-bold">{demandeService.prix_ttc} DT</td>
+    </tr>
+  </tfoot>
         </Table>
       </Container>
     </section>

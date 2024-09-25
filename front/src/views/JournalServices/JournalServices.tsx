@@ -15,14 +15,14 @@ import Article from '../../entities/Article';
 
 interface SeeDeatailsProps {
   id: number | string;
-}
+} 
 
 const SeeDetails :FC<SeeDeatailsProps> = ({ id })=> {
   const navigate = useNavigate();
 
   return <button onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className='btn btn-primary w-100 p-0'>
             <i onClick={()=> {navigate("/baraka/detailsDemandeService", { state: { id }})}} className="bi bi-receipt-cutoff"></i>
-    </button>
+        </button>
 }
 
 

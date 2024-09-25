@@ -71,7 +71,12 @@ const DetailsService: React.FC = () => {
 
   //----ClCK EVENTS --------------------------------
   const handleNavigateToFacture = ():void => {
-    navigate('/facture');
+    navigate('/facture', {
+      state: {
+        demandeService: demandeService,
+        timbreFiscal: parseFloat((demandeService?.prix_ttc - totals.totalTTC).toFixed(3)),
+      }
+  });
   };
 
   //---API REQUESTS --------------------------------
@@ -100,7 +105,8 @@ const DetailsService: React.FC = () => {
     e.preventDefault();
     try {
       console.log(paiemntDetails)
-      if(demandeService && paiemntDetails.montant > 0 && ((paiemntDetails.montant + paiementSum) <= (demandeService?.prix_ttc + timbreFiscal))){
+      console.log(paiemntDetails.montant + paiementSum)
+      if(demandeService && (paiemntDetails.montant > 0) && ((parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3))) <= (demandeService?.prix_ttc + timbreFiscal))){
           await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, (timbreFiscal + demandeService.prix_ttc), paiemntDetails);
           setTimbreFiscal(0);
           await fetchDemandeService();
@@ -111,7 +117,7 @@ const DetailsService: React.FC = () => {
           })
           // refresh the page after the paiement is added
     }
-    else if(demandeService && (paiemntDetails.montant + paiementSum) > demandeService?.prix_ttc){
+    else if(demandeService && (parseFloat(paiemntDetails.montant) + paiementSum) > demandeService?.prix_ttc){
       setAlertMessage({
         isError: true,
         message: 'Mantant maximale est ' + (demandeService.prix_ttc - paiementSum),
@@ -170,9 +176,8 @@ const DetailsService: React.FC = () => {
 
   useEffect(()=> {
     setpaiemntDetails(((prv)=>{
-      console.log("runned ")
-      console.log(paiementSum);
-      return {...prv, demande_srv: id, montant: parseFloat(((totals.totalTTC - paiementSum) + timbreFiscal).toFixed(3)) }
+      console.log(parseFloat(((demandeService?.prix_ttc - paiementSum) + timbreFiscal).toFixed(3)))
+      return {...prv, demande_srv: id, montant: parseFloat(((demandeService?.prix_ttc - paiementSum) + timbreFiscal).toFixed(3)) }
     }))
   }, [id, paiementSum, totals.totalTTC, timbreFiscal])
 
@@ -476,7 +481,6 @@ const DetailsService: React.FC = () => {
                         size="lg"
                         className="afficher-facture-btn mt-3"
                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleNavigateToFacture(e)}
-                        disabled={demandeService?.payer === 1}
                       >
                         Facture <i className="bi bi-receipt"></i>
                       </Button>

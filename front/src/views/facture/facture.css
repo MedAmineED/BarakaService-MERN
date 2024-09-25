@@ -49,3 +49,24 @@
   .tm-col {
     white-space: nowrap;
   }
+
+
+
+  .tfoot-small {
+    font-size: 0.8rem; /* Smaller font size */
+    font-weight: bolder;
+    border: 2px solid #cccccc00;
+  }
+  .tfoot-small td {
+    /* border: 2px solid #cccccc; */
+  }
+  
+  .tfoot-small input, 
+  .tfoot-small label, 
+  .tfoot-small span {
+    font-size: 0.8rem; /* Adjust the font size of inputs, labels, and spans */
+  }
+  
+  .tfoot-small tr {
+    border-width: 1px; /* Thinner lines */
+  }
