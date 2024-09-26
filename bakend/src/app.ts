@@ -10,6 +10,7 @@ import familleRoutes from "./routes/familleRoutes";
 import cors from "cors";
 import employeeRoutes from "./routes/employeeRoutes";
 import societeRoutes from "./routes/societeRouter";
+import factureRoutes from "./routes/factureRoutes";
 
 
 const app: Express = express();
@@ -37,6 +38,7 @@ app.use('/api/paiements', paiementRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/familles', familleRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/facture', factureRoutes);
 app.use('/api/societe', societeRoutes);
 
 // Start server

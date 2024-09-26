@@ -7,6 +7,7 @@ interface ApiUrlsIn {
     readonly DEMANDE_SERVICE : string;
     readonly PAIMENTS : string;
     readonly SOCIETE : string;
+    readonly FACTURE : string;
 }
 
 const url = "http://localhost:5055/";
@@ -20,6 +21,7 @@ const ApiUrls: ApiUrlsIn = {
     DEMANDE_SERVICE : url + "api/demande-services",
     PAIMENTS : url + "api/paiements",
     SOCIETE : url + "api/societe",
+    FACTURE : url + "api/facture",
 }
 
 export default ApiUrls;

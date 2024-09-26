@@ -12,7 +12,7 @@ import DevisList from "../views/devis/DevisList";
 import JournalService from "../views/JournalServices/JournalServices";
 import DetailsDemande from "../views/JournalServices/detailsDemande/DetailsDemande";
 import MainDemandeService from "../views/demandeservice/MainDemandeService";
-import Facture from "../views/facture/Facture";
+import FactureCmp from '../views/facture/FactureCmp';
 
 const Router: React.FC = () => {
   const routes: RouteObject[] = [
@@ -64,7 +64,7 @@ const Router: React.FC = () => {
     },
     {
       path: "facture",
-      element: <Facture />,
+      element: <FactureCmp />,
     },
     {
       path: "/login",

@@ -5,10 +5,12 @@ import {
     DataType,
     PrimaryKey,
     AutoIncrement,
-    HasMany
+    HasMany,
+    HasOne
 } from "sequelize-typescript";
 import Paiement from "./Paiement";
 import LigneDemande from "./LigneDemande";
+import Facture from "./Facture";
 
 @Table({
     timestamps: false, 
@@ -89,6 +91,9 @@ class DemandeService extends Model {
 
     @HasMany(() => Paiement)
     declare paiements: Paiement[];
+
+    @HasOne(() => Facture, { foreignKey: 'id_dem' }) 
+    declare facture: Facture; 
     
     @HasMany(() => LigneDemande, { as: 'ligneDemandes', foreignKey: 'demande_srv' })
     declare ligneDemandes: LigneDemande[];

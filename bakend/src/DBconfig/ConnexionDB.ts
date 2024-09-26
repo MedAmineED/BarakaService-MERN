@@ -11,6 +11,8 @@ import DemandeService from "../models/DemandeService";
 import LigneServices from "../models/LigneDemande";
 import Paiement from "../models/Paiement";
 import Societe from "../models/Societe";
+import Facture from "../models/Facture";
+import LigneFacture from "../models/LigneFacture";
 
 // const { Seq } = require('sequelize');
 // const User = require('../models/User');
@@ -35,6 +37,8 @@ const sequelizeConnexion = new Sequelize({
               LigneServices, 
               Paiement, 
               Societe,
+              Facture,
+              LigneFacture
             ],
   });
 

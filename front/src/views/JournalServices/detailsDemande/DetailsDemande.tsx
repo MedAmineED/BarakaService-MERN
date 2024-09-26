@@ -9,6 +9,8 @@ import './detailsStyle.css';
 import PaimentServices from '../../../ApiServices/PaimentServices';
 import Paiement from 'src/entities/Paiement';
 import { Form, Button } from 'react-bootstrap';
+import FcatureService from '../../../ApiServices/FcatureService';
+import Facture from 'src/entities/Facture';
 
 const DetailsService: React.FC = () => {
   const [demandeService, setDemandeService] = useState<DemandeServiceEntity | null>(null);
@@ -38,6 +40,8 @@ const DetailsService: React.FC = () => {
   });
   const [timbreFiscal, setTimbreFiscal] = useState<number>(0);
   const [alertIsOpen, setAlertIsOpen] = useState<boolean>(false);
+  const [hasFacture, setHasFacture] = useState<boolean>(false);
+  const [facture, setFacture] = useState<Facture | null>(null);
 
   const navigate = useNavigate();
 
@@ -75,6 +79,8 @@ const DetailsService: React.FC = () => {
       state: {
         demandeService: demandeService,
         timbreFiscal: parseFloat((demandeService?.prix_ttc - totals.totalTTC).toFixed(3)),
+        totals,
+        facture
       }
   });
   };
@@ -86,6 +92,18 @@ const DetailsService: React.FC = () => {
       const response = await DemandeServiceService.GetDemandeServiceById(`${ApiUrls.DEMANDE_SERVICE}`, id);
       setDemandeService(response);
       console.log(demandeService);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    }
+  };
+
+  const getFacture = async (): Promise<void> => {
+    try {
+      const response = await FcatureService.GetFactureByIdDem(`${ApiUrls.FACTURE}`, id);
+      console.log(response);
+      if(response){
+        setHasFacture(true);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -104,8 +122,6 @@ const DetailsService: React.FC = () => {
   const handlePaiement = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     try {
-      console.log(paiemntDetails)
-      console.log(paiemntDetails.montant + paiementSum)
       if(demandeService && (paiemntDetails.montant > 0) && ((parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3))) <= (demandeService?.prix_ttc + timbreFiscal))){
           await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, (timbreFiscal + demandeService.prix_ttc), paiemntDetails);
           setTimbreFiscal(0);
@@ -138,6 +154,10 @@ const DetailsService: React.FC = () => {
 
   //--- LIFECYCLE --------------------------------
 
+  useEffect(()=> {
+    getFacture();
+  }, [])
+
   useEffect(() => {
     if (demandeService?.ligneDemandes) {
       setLigneDemandes(demandeService.ligneDemandes);
@@ -157,11 +177,11 @@ const DetailsService: React.FC = () => {
     ligneDemandes.forEach((ld) => {
       //--- calculate totals for each ligneDemande ---
       const prixAfterRemise = ld.prix - (ld.remise || 0);
-      const tax = ((prixAfterRemise * (ld.tva || 0)) / 100) * ld.quantite;
+      const tax = ((ld.prix * (ld.tva || 0)) / 100) * ld.quantite;
       const ttc = prixAfterRemise * ld.quantite + tax;
 
       //--- update values for the global Totals ---
-      totalRemise += ld.remise || 0;
+      totalRemise += (ld.remise * ld.quantite) || 0;
       totalTax += tax;
       totalTTC += ttc;
     });
@@ -180,6 +200,8 @@ const DetailsService: React.FC = () => {
       return {...prv, demande_srv: id, montant: parseFloat(((demandeService?.prix_ttc - paiementSum) + timbreFiscal).toFixed(3)) }
     }))
   }, [id, paiementSum, totals.totalTTC, timbreFiscal])
+
+
 
   useEffect(() =>{        
     if(alertMessage.message){
@@ -295,7 +317,7 @@ const DetailsService: React.FC = () => {
                   <tbody>
                     {ligneDemandes.map((ld, index) => {
                       const prixAfterRemise = ld.prix - (ld.remise || 0);
-                      const taxU = (prixAfterRemise * (ld.tva || 0)) / 100;
+                      const taxU = (ld.prix * (ld.tva || 0)) / 100;
                       const taxT = taxU * ld.quantite;
                       const ttc = prixAfterRemise * ld.quantite + taxT;
 
@@ -313,10 +335,10 @@ const DetailsService: React.FC = () => {
                             {ld.quantite}
                           </td>
                           <td className="text-right" style={{ padding: '0.25rem' }}>
-                            {ld.remise} DT
+                            {(ld.remise * ld.quantite).toFixed(3)} DT
                             <br />
                             <small className="text-muted">
-                              Unitaire: {(ld.remise / ld.quantite).toFixed(3)} DT
+                              Unitaire: {(ld.remise).toFixed(3)} DT
                             </small>
                           </td>
                           <td className="text-right" style={{ padding: '0.25rem' }}>
@@ -482,7 +504,7 @@ const DetailsService: React.FC = () => {
                         className="afficher-facture-btn mt-3"
                         onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleNavigateToFacture(e)}
                       >
-                        Facture <i className="bi bi-receipt"></i>
+                        {!hasFacture? "Creer Facture" : "Facture"} <i className="bi bi-receipt"></i>
                       </Button>
                     </div>
                     </div>

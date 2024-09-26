@@ -9,8 +9,7 @@ import {
     BelongsTo
 } from "sequelize-typescript";
 import DemandeService from "./DemandeService";
-import Service from "./Service";
-import Article from "./Article";
+
 
 @Table({
     tableName: "tlignedemande",
