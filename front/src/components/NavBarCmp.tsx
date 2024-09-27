@@ -30,7 +30,7 @@ const NavBarCmp: React.FC = () => {
                         <Nav.Link onClick={()=> {navigateTo("/baraka/listeservice")}}>Services</Nav.Link>
                         <Nav.Link onClick={()=> {navigateTo("/baraka/demandeservice")}}>Demande service</Nav.Link>
                         <Nav.Link onClick={()=> {navigateTo("/baraka/journalservice")}}>Journal des services</Nav.Link>
-                        <Nav.Link onClick={()=> {navigateTo("/baraka/listeDevis")}}>Devis</Nav.Link>
+                        {/* <Nav.Link onClick={()=> {navigateTo("/baraka/listeDevis")}}>Devis</Nav.Link> */}
                         <Nav.Link onClick={()=> {navigateTo("/baraka/listeemployee")}}>Employes</Nav.Link>
                     </Nav>
                   </Navbar.Collapse>
