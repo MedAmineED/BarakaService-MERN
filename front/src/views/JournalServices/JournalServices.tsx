@@ -169,7 +169,7 @@ const JournalService: FC = () => {
             </div>
           </div>
           <GenericTable
-            data={demandeList}
+            data={demandeList.reverse()}
             columns={columns}
             inputFields={inputFields}
             fetchById={fetchDemandeById}

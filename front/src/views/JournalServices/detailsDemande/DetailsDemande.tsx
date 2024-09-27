@@ -121,7 +121,7 @@ const DetailsService: React.FC = () => {
     e.preventDefault();
     try {
       if(demandeService && (paiemntDetails.montant > 0) && ((parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3))) <= (demandeService?.prix_ttc + timbreFiscal))){
-          await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, (timbreFiscal + demandeService.prix_ttc), paiemntDetails);
+          await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, parseFloat((timbreFiscal + demandeService.prix_ttc).toFixed(3)), paiemntDetails);
           setTimbreFiscal(0);
           await fetchDemandeService();
           await fetchPiementsSum();
@@ -131,10 +131,10 @@ const DetailsService: React.FC = () => {
           })
           // refresh the page after the paiement is added
     }
-    else if(demandeService && (parseFloat(paiemntDetails.montant) + paiementSum) > demandeService?.prix_ttc){
+    else if(demandeService && parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)) > demandeService?.prix_ttc){
       setAlertMessage({
         isError: true,
-        message: 'Mantant maximale est ' + (demandeService.prix_ttc - paiementSum),
+        message: 'Mantant maximale est ' + parseFloat((demandeService.prix_ttc - paiementSum).toFixed(3)),
       })
     }
     else{

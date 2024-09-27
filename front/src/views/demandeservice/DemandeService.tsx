@@ -131,7 +131,7 @@ const DemandeService: FC = () => {
   useEffect(() => {
     // Update formData when ligneDemandeArr changes
     if(ligneDemandeListe.length > 0){
-      setFormData((prevData) => ({...prevData, lignedemande: ligneDemandeListe }));
+      setFormData((prevData) => ({...prevData, prix_ttc: parseFloat((prevData.prix_ttc).toFixed(3)), lignedemande: ligneDemandeListe }));
     }
   },[ligneDemandeListe]);
 
