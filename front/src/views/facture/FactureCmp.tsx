@@ -27,11 +27,21 @@ const FactureCmp: React.FC = () => {
     tel: ""
   });
   const [factureState, setFactureState] = useState<Facture | null>();
+  const [factNum, setFactNum] = useState<number>(0);
 
   const fetchSociete = async (): Promise<void> => {
     try {
       const response = await SocieteService.GetListSociete(`${ApiUrls.SOCIETE}`);
       setSociete(response[0]);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    }
+  };
+
+  const getLatestNumber = async (): Promise<void> => {
+    try {
+      const response = await FcatureService.getLatestNumber(`${ApiUrls.FACTURE}`);
+      setFactNum(response + 1);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -64,12 +74,17 @@ const FactureCmp: React.FC = () => {
       });
     }
 
+    getLatestNumber();
     fetchSociete();
     if(facture){
       setFactureState(facture);
     }else {
+      console.log(new Date().toISOString().split('T'))
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      console.log(localDate);
       const newFacture: Facture = {
-        date_facture: new Date().toISOString().split('T')[0], 
+        date_facture: localDate.split('T')[0], 
         client: demandeService.client, 
         id_dem: demandeService.id_dem,
         pht: totals.subtotal, 
@@ -134,7 +149,7 @@ const FactureCmp: React.FC = () => {
         doc.text(`Client: ${"..........."}`, doc.internal.pageSize.getWidth() / 2, yPos + 16, { align: 'center' });
         doc.text(`Tel: ${"..........."}`, doc.internal.pageSize.getWidth() / 2, yPos + 20, { align: 'center' });
         doc.setFontSize(8);
-        doc.text('Tunis le 24-09-2024', doc.internal.pageSize.getWidth() - margin - 30, yPos + 24);
+        doc.text(factureState?.date_facture, doc.internal.pageSize.getWidth() - margin - 30, yPos + 24);
         yPos += 30;
       }
     } catch (error) {
@@ -166,8 +181,8 @@ const FactureCmp: React.FC = () => {
         cellPadding: 2,
       },
       headStyles: {
-        fillColor: "#c01635", // Light gray background for header
-        textColor: "#ffffff", // Black text for header
+        fillColor: "#c01635",
+        textColor: "#ffffff",
         fontStyle: 'bold',
       },
       margin: { left: margin, right: margin },
@@ -239,14 +254,16 @@ const FactureCmp: React.FC = () => {
           </Col>
           <Col md={4}>
             <ul className="list-unstyled client-info">
-              <li><h4>Facture N° : {1}/2024</h4></li>
+              <li><h4>Facture N° : {factureState?.num_fact? factureState?.num_fact : 
+                                     factNum + "/" + (factureState?.date_facture+"").split('T')[0].split('-')[0]
+                                    }</h4></li>
               <li><strong>Client :</strong> {demandeService.client? demandeService.client : ".............."}</li>
               <li><strong>Tel :</strong> {"................"}</li>
             </ul>
           </Col>
           <Col md={4}>
             <ul className="list-unstyled facture-info">
-              <li><strong>Tunis le </strong> {((factureState?.date_facture + "").split(' ')[0]).split('-').reverse().reduce((cr, nx)=>( cr + "-" + nx))}</li>
+              <li><strong>Tunis le </strong> {((factureState?.date_facture + "").split(' ')[0]).split('T')[0].split('-').reverse().reduce((cr, nxt)=>cr+"-"+nxt)}</li>
             </ul>
           </Col>
         </Row>

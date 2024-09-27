@@ -91,7 +91,6 @@ const DetailsService: React.FC = () => {
     try {
       const response = await DemandeServiceService.GetDemandeServiceById(`${ApiUrls.DEMANDE_SERVICE}`, id);
       setDemandeService(response);
-      console.log(demandeService);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -100,10 +99,10 @@ const DetailsService: React.FC = () => {
   const getFacture = async (): Promise<void> => {
     try {
       const response = await FcatureService.GetFactureByIdDem(`${ApiUrls.FACTURE}`, id);
-      console.log(response);
       if(response){
         setHasFacture(true);
       }
+      setFacture(response);
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -112,7 +111,6 @@ const DetailsService: React.FC = () => {
   const fetchPiementsSum = async (): Promise<void> => {
     try {
       const response = await PaimentServices.GetSum(`${ApiUrls.PAIMENTS}`, id);
-      console.log(response);
       setPaiementSum(response);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -196,7 +194,6 @@ const DetailsService: React.FC = () => {
 
   useEffect(()=> {
     setpaiemntDetails(((prv)=>{
-      console.log(parseFloat(((demandeService?.prix_ttc - paiementSum) + timbreFiscal).toFixed(3)))
       return {...prv, demande_srv: id, montant: parseFloat(((demandeService?.prix_ttc - paiementSum) + timbreFiscal).toFixed(3)) }
     }))
   }, [id, paiementSum, totals.totalTTC, timbreFiscal])

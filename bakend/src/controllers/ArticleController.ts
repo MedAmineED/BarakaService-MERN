@@ -5,7 +5,6 @@ import { Op } from 'sequelize';
 
 // Create an Article
 export const createArticle = async (req: Request, res: Response) => {
-    console.log(req.body);
     try {
         const article = await Article.create(req.body);
         res.status(201).json(article);
@@ -85,7 +84,7 @@ export const getAllArticles = async (req: Request, res: Response) => {
             ]
         });
 
-        const formattedArticles = articles.map(article => ({
+        const formattedArticles = articles.map((article :Article) => ({
             id: article.id,
             identification: article.identification,
             designation: article.designation,

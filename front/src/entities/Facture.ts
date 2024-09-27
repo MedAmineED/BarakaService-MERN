@@ -6,7 +6,7 @@ interface Facture {
     date_facture: Date;
     client: string;
     id_dem: number;
-    num_fact?: number;
+    num_fact: string;
     pht: number;
     tax: number;
     remise_total: number;

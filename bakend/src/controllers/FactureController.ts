@@ -9,12 +9,30 @@ export const createFacture = async (req: Request, res: Response) => {
     const transaction = await sequelizeConnexion.transaction();
 
     try {
+        let factNum = 1;
         const now = new Date();
-        const date = now.toISOString().split('T')[0];
+        const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         const dateTime = `${date}`;
 
+        const currentYear: number = parseInt(dateTime.split('-')[0]);
+
+        const latestFacture = await Facture.findOne({
+            order: [['id_fact', 'DESC']], // Order by primary key (or timestamp) to get the last added
+        });
+        if(latestFacture){
+            const factureYear: number = parseInt(((latestFacture as Facture).date_facture + "").split('-')[0].split(' ')[3]) || 0;
+            
+            
+            if((currentYear - factureYear) == 0){
+                const latestFactNum = parseInt(latestFacture?.num_fact.split('/')[0] as string) || 0;
+                factNum = latestFactNum + 1;
+            }else {
+                factNum = 1;
+            }
+        }
+
         const { ligneFacture, ...factureData } = req.body;
-        // Check if ligneFacture is not empty
+        
         if (!ligneFacture || ligneFacture.length === 0) {
             console.log({ error: 'LigneFacture cannot be empty' });
             return res.status(400).json({ error: 'LigneFacture cannot be empty' });
@@ -22,7 +40,7 @@ export const createFacture = async (req: Request, res: Response) => {
 
         // Create Facture without including LigneFacture initially
         const facture = await Facture.create(
-            { ...factureData, date_facture: dateTime },
+            { ...factureData, date_facture: dateTime, num_fact: `${factNum + "/" + currentYear}` },
             { transaction }
         );
 
@@ -38,6 +56,19 @@ export const createFacture = async (req: Request, res: Response) => {
         await transaction.rollback();
         console.log({ error: 'Failed to create facture', details: error });
         res.status(500).json({ error: 'Failed to create facture', details: error });
+    }
+};
+
+
+export const getLatestNumberOfFactures = async (req: Request, res: Response) => {
+    try {
+        const latestFacture = await Facture.findOne({
+            order: [['id_fact', 'DESC']], // Order by primary key (or timestamp) to get the last added
+        });
+            res.status(200).json({latestnumber : parseInt((latestFacture?.num_fact)?.split('/')[0] as string)});
+    } catch (error) {
+        console.log({ error: 'Failed to fetch latest number of factures', details: error });
+        res.status(500).json({ error: 'Failed to fetch latest number of factures', details: error });
     }
 };
 
@@ -162,3 +193,4 @@ export const deleteFacture = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to delete facture' });
     }
 };
+

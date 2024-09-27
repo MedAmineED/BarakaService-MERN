@@ -17,7 +17,6 @@ export const createSociete = async (req: Request, res: Response) => {
 export const getAllSocietes = async (req: Request, res: Response) => {
     try {
         const societes = await Societe.findAll();
-        console.log(societes)
         res.status(200).json(societes);
     } catch (error) {
         console.log(error);

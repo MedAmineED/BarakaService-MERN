@@ -50,6 +50,22 @@ class FactureService {
         }
     }
 
+    async getLatestNumber(endpoint: string): Promise<number> {
+        try {
+            const response = await axios.get<{latestnumber : number}>(`${endpoint}/latestnumber`, {
+                headers: {
+                    Authorization: `Bearer token`,
+                    'Content-Type': 'application/json'
+                },
+            });
+            return response.data.latestnumber;
+        } catch (error) {
+            console.error("Error adding Facture:", error);
+            throw error;
+        }
+    }
+
+
     async AddFacture(endpoint: string, facture: Facture): Promise<Facture> {
         try {
             const response = await axios.post<Facture>(endpoint, facture, {

@@ -43,10 +43,10 @@ class Facture extends Model {
     declare id_dem: number;
 
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.STRING,
         allowNull: false,
     })
-    declare num_fact: number;
+    declare num_fact: string;
 
     @Column({
         type: DataType.DOUBLE,
