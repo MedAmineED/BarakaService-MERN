@@ -2,6 +2,8 @@ import {  createContext, Dispatch, SetStateAction } from 'react';
 import LigneDemande from '../entities/LigneDemande';
 import ServiceEntity from '../entities/ServiceEntity';
 import Article from '../entities/Article';
+import DemandeServiceEntity from '../entities/DemandeServiceEntity';
+import LigneFacture from '../entities/LigneFacture';
 
 
 
@@ -30,5 +32,31 @@ export const SelectedItmsContext = createContext<{
     reset: () => void,
   } | undefined>(undefined);
 
+
+//----------------------------------------------------------------
+//----- select items context  for "Facture"-----------------------
+//----------------------------------------------------------------
+
+type ItemToFact = Item | DemandeServiceEntity | { libelle: string; prix: number}
+
+export const SelectedItmsForFactureContext = createContext<{
+    selectedItems: { id: number, type: string }[],
+    ligneFactureList: LigneFacture[],
+    // itemToFactListe : ItemToFact[],
+    totals : {
+      montant_HT: number,
+      remise_total: number,
+      montant_TVA: number,
+      montant_TTC: number,
+    },
+    timbreFiscale : number,
+    setTimbreFiscale: Dispatch<SetStateAction<number>>,
+    transformFromItemToLigneFacture: (item: ItemToFact)=> void,
+    calculateTotals: ()=> void,
+    handleItemSelect: (item: ItemToFact) => void,
+    updateItem: (index: number, item: LigneFacture) => void,
+    removeItemSelect: (item: ItemToFact) => void,
+    removeItemSelectXbutton: (item: LigneFacture) => void,
+} | undefined>(undefined);
 
 

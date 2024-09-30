@@ -1,13 +1,13 @@
-import CustomInput from "../../../components/customInput/CustomInput";
-import CustomModal from "../../../components/customModal/CustomModal";
+import CustomInput from "../customInput/CustomInput";
+import CustomModal from "../customModal/CustomModal";
 import React, { FC, useContext, useState } from "react";
-import { SelectedItmsContext } from "../../../contexts/Contexts";
+import { SelectedItmsForFactureContext } from "../../contexts/Contexts";
 
 
 
-const CustomService : FC = ()=> {
-    const context = useContext(SelectedItmsContext);
-    const { transformFromItemToLigneDemande }  = context;
+const ServiceDivers : FC = ()=> { 
+    const context = useContext(SelectedItmsForFactureContext);
+    const { transformFromItemToLigneFacture }  = context;
 
     //input values in one state object
     const [serviceFormData, setServiceFormData] = useState({
@@ -23,7 +23,7 @@ const CustomService : FC = ()=> {
 
 
     const onSave = ()=> {
-        transformFromItemToLigneDemande(serviceFormData);
+        transformFromItemToLigneFacture(serviceFormData);
     }
 
     
@@ -32,7 +32,7 @@ const CustomService : FC = ()=> {
     return (
     <CustomModal
         title={'Ajouter Service'} 
-        textButton={'Ajouter service'} 
+        textButton={'Service Divers'} 
         onSave={() =>{onSave()}}
     >
       <div className="d-flex justify-content-center gap-3 align-items-center flex-column">
@@ -56,4 +56,4 @@ const CustomService : FC = ()=> {
     );
 }
 
-export default CustomService;
+export default ServiceDivers;

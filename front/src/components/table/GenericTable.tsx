@@ -27,6 +27,7 @@ interface GenericTableProps {
   fetchById?: (id: number) => Promise<any>;
   onCheckedItemsChange?: (check: boolean, service: any) => void;
   func? : (...args: any[])=> any;
+  onRowClick?: (item?: any)=> void;
 }
 
 
@@ -43,6 +44,7 @@ const GenericTable: FC<GenericTableProps> = ({
   onDelete,
   fetchById,
   selectedItems,
+  onRowClick
 }) => {
   // Sort data so that selected items appear first
   const sortedData = [...data].sort((a, b): number => {
@@ -68,7 +70,9 @@ const GenericTable: FC<GenericTableProps> = ({
         </thead>
         <tbody>
           {sortedData.map((item, rowIndex) => (
-            <tr key={item.id || rowIndex}>
+            <tr 
+             className={`${onRowClick? 'pointer-row' : ""}`}
+              onClick={()=> {onRowClick? onRowClick(item) : ()=> {}}} key={item.id || rowIndex}>
               {/* generate columns(simple columns or inputs columns) */}
               {columns.map((column, colIndex) => (
                 column.render? (

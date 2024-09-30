@@ -10,8 +10,10 @@ import ApiUrls from '../../ApiUrl/ApiUrls';
 import { useLocation } from 'react-router-dom';
 import LigneDemande from '../../entities/LigneDemande';
 import Facture from '../../entities/Facture';
-import FcatureService from '../../ApiServices/FcatureService';
+import FcatureService from '../../ApiServices/FactureService';
 import LigneFacture from '../../entities/LigneFacture';
+
+
 
 const FactureCmp: React.FC = () => {
   const location = useLocation();
@@ -19,7 +21,8 @@ const FactureCmp: React.FC = () => {
   const [totals, setTotals] = useState({
     subtotal: 0,
     taxTotal: 0,
-    remiseTotal: 0
+    remiseTotal: 0,
+    isRunned : false,
   });
   const [societe, setSociete] = useState<Societe>({
     nom: "",
@@ -63,57 +66,68 @@ const FactureCmp: React.FC = () => {
   };
   
 
-  
-
   useEffect(() => {
-    if (demandeService) {
+    // Fetch Societe and Latest Facture Number
+    const initData = async () => {
+      await fetchSociete();
+      await getLatestNumber();
+    };
+  
+    initData();
+  
+    // Calculate totals only once when `demandeService` is available
+    if (demandeService && !totals.isRunned) {
+      const subtotal = parseFloat((demandeService.ligneDemandes)
+        .reduce((sum, item) => sum + (item.prix * item.quantite), 0).toFixed(3));
+      const remiseTotal = parseFloat((demandeService.ligneDemandes)
+        .reduce((sum, item) => sum + (item.remise * item.quantite), 0).toFixed(3));
+      const taxTotal = parseFloat((demandeService.ligneDemandes)
+        .reduce((sum, item) => sum + (item.prix * (item.tva / 100) * item.quantite), 0).toFixed(3));
+  
       setTotals({
-        subtotal: (demandeService.ligneDemandes).reduce((sum, item) => sum + (item.prix * item.quantite), 0),
-        remiseTotal: (demandeService.ligneDemandes).reduce((sum, item) => sum + (item.remise * item.quantite), 0),
-        taxTotal: parseFloat(((demandeService.ligneDemandes).reduce((sum, item) => sum + (item.prix * (item.tva / 100) * item.quantite), 0)).toFixed(3)),
+        subtotal,
+        remiseTotal,
+        taxTotal,
+        isRunned: true,
       });
     }
-
-    getLatestNumber();
-    fetchSociete();
-    if(facture){
-      setFactureState(facture);
-    }else {
-      console.log(new Date().toISOString().split('T'))
+  
+    // Create Facture only if it doesn't exist and totals are updated
+    if (!facture && totals.isRunned && !factureState) {
       const now = new Date();
       const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      console.log(localDate);
+  
       const newFacture: Facture = {
-        date_facture: localDate.split('T')[0], 
-        client: demandeService.client, 
+        date_facture: localDate.split('T')[0],
+        client: demandeService.client,
         id_dem: demandeService.id_dem,
-        pht: totals.subtotal, 
-        tax: totals.taxTotal, 
-        remise_total: totals.remiseTotal, 
+        pht: totals.subtotal,
+        tax: totals.taxTotal,
+        remise_total: totals.remiseTotal,
         timbre_fiscal: timbreFiscal,
-        prix_ttc: demandeService.prix_ttc, 
-        ligneFacture: demandeService.ligneDemandes.map((ligne: LigneDemande) => {
-          return {
-            reference: ligne.reference,
-            designation: ligne.designation,
-            pu: ligne.prix,
-            qte: ligne.quantite,
-            tva: ligne.tva,
-            remise: parseFloat((ligne.remise * ligne.quantite).toFixed(3)),
-            pht: parseFloat((ligne.prix * ligne.quantite).toFixed(3)),
-            ptt: parseFloat((ligne.prix * ligne.quantite * (1 + (ligne.tva / 100)) - (ligne.remise * ligne.quantite)).toFixed(3))
-           }})
-      }
-      //--- generate facture
-      setFactureState(newFacture)
+        prix_ttc: demandeService.prix_ttc,
+        ligneFacture: demandeService.ligneDemandes.map((ligne: LigneDemande) => ({
+          reference: ligne.reference,
+          designation: ligne.designation,
+          pu: ligne.prix,
+          qte: ligne.quantite,
+          tva: ligne.tva,
+          remise: parseFloat((ligne.remise * ligne.quantite).toFixed(3)),
+          pht: parseFloat((ligne.prix * ligne.quantite).toFixed(3)),
+          ptt: parseFloat((ligne.prix * ligne.quantite * (1 + (ligne.tva / 100)) - (ligne.remise * ligne.quantite)).toFixed(3))
+        })),
+      };
+  
+      setFactureState(newFacture);
     }
-  }, []);
-
-  useEffect(() => {
-    if(!facture && factureState){
+  
+    // Check if facture needs to be created
+    if (!facture && factureState) {
       createFacture(factureState);
     }
-  }, [factureState]);
+  }, [demandeService, facture, factureState, totals.isRunned]);
+  
+
 
 
   
@@ -237,7 +251,7 @@ const FactureCmp: React.FC = () => {
         <Row id= {'fc-header'} className="py-3 align-items-center header-facture">
           <Col md={4}>
             <ul className="list-unstyled societe-info">
-              <li><strong>Socite :</strong> {societe.nom}</li>
+              <li><strong>Societe :</strong> {societe.nom}</li>
               <li><strong>Adresse :</strong> {societe.adresse}</li>
               <li><strong>Tel :</strong> {societe.tel}</li>
               <li><strong>Code TVA :</strong> {}</li>
@@ -285,15 +299,15 @@ const FactureCmp: React.FC = () => {
             <tbody>
               {factureState?.ligneFacture?.map((ligneFct: LigneFacture, index: number) => (
                 <tr key={ligneFct.id} className={`row-${index % 2 === 0 ? 'even' : 'odd'}`}>
-                  <td className='col-number'>{index + 1}</td>
-                  <td className="last-column">{ligneFct.reference}</td>
-                  <td className="last-column">{ligneFct.designation}</td>
-                  <td className="last-column">{ligneFct.pu} DT</td>
-                  <td className="last-column">{ligneFct.qte}</td>
-                  <td className="last-column">{ligneFct.tva}%</td>
-                  <td className="last-column">{(ligneFct.remise).toFixed(3)} DT</td>
-                  <td className="last-column">{ligneFct.pht} DT</td>
-                  <td className="last-column">{(ligneFct.ptt)} DT</td>
+                  <td className='col-number has-letter'>{index + 1}</td>
+                  <td className="last-column has-letter">{ligneFct.reference}</td>
+                  <td className="last-column has-letter">{ligneFct.designation}</td>
+                  <td className="last-column has-number">{ligneFct.pu} DT</td>
+                  <td className="last-column has-number">{ligneFct.qte}</td>
+                  <td className="last-column has-number">{ligneFct.tva}%</td>
+                  <td className="last-column has-number">{(ligneFct.remise).toFixed(3)} DT</td>
+                  <td className="last-column has-number">{ligneFct.pht} DT</td>
+                  <td className="last-column has-number">{(ligneFct.ptt)} DT</td>
                 </tr>
               ))}
             </tbody>
@@ -313,7 +327,7 @@ const FactureCmp: React.FC = () => {
               <td>RemiseToal</td>
               <td>{(totals.remiseTotal).toFixed(3)} DT</td>
             </tr>
-            <tr className='tm-col'>
+            <tr>
               <td colSpan={7}></td>
               <td>Timbre Fiscale</td>
               <td>{timbreFiscal} DT</td>

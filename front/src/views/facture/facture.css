@@ -89,6 +89,14 @@
   font-size: 0.8rem;
 }
 
+.has-letter {
+  text-align: left;
+}
+
+.has-number {
+  text-align: end;
+}
+
 .tfoot-small tr {
   border-width: 1px;
 }

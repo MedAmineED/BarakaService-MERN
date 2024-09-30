@@ -1,0 +1,18 @@
+.custom-width {
+    width: 50px; /* Adjust this value as needed */
+}
+
+.custom-width-large {
+    width: 100px; /* Adjust this value as needed */
+}
+
+/* Optional: If you want to ensure no other styles override these */
+.table th.custom-width,
+.table td.custom-width {
+    width: 50px !important;
+}
+
+.table th.custom-width-large,
+.table td.custom-width-large {
+    width: 100px !important;
+}

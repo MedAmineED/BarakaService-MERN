@@ -116,6 +116,7 @@ export const getAllFactures = async (req: Request, res: Response) => {
             client: facture.client,
             id_dem: facture.id_dem,
             pht: facture.pht,
+            num_fact : facture.num_fact,
             tax: facture.tax,
             remise_total: facture.remise_total,
             timbre_fiscal: facture.timbre_fiscal,

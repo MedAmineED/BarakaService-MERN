@@ -7,7 +7,7 @@ import LigneDemande from '../entities/LigneDemande';
 
 type Item = ServiceEntity | Article | { libelle: string; prix: number};
 
-interface MainSelectedContextProps {
+interface MainSelectedContextProps { 
     children: React.ReactNode;
   }
 

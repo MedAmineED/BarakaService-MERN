@@ -1,3 +1,8 @@
 .table-active-custom {
     background-color: #daf7a6 !important;
 }
+
+.pointer-row:hover {
+    background-color: #daf7a6;
+    cursor: pointer;
+}

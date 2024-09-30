@@ -5,8 +5,8 @@ import { demandeServiceSchema } from '../../util/validationSchema';
 import MainCmp from '../../components/MainCmp';
 import ItemHeader from '../../components/itemHeader/ItemHeader';
 import DemandeServiceTable from './demandeServiceTable/DemandeServiceTable';
-import ServiceListModal from './servicesListModal/ServiceListModal';
-import ArticleListModal from './ArticleListModal/ArticleListModal';
+import ServiceListModal from '../../components/servicesListModal/ServiceListModal';
+import ArticleListModal from '../../components/ArticleListModal/ArticleListModal';
 import DemandeServiceService from '../../ApiServices/DemandeServiceService';
 import ApiUrls from '../../ApiUrl/ApiUrls';
 import DemandeServiceEntity from '../../entities/DemandeServiceEntity';
@@ -15,7 +15,7 @@ import VehiculeForm from './vehiculeForm/VehiculeForm';
 import ClientForm from './clientForm/ClientForm';
 import EmployeeForm from './employeeForm/EmployeeForm';
 import { SelectedItmsContext } from '../../contexts/Contexts';
-import CustomService from './customService/CustomService';
+import CustomService from '../../components/customService/CustomService';
 
 
 
@@ -157,6 +157,7 @@ const DemandeService: FC = () => {
 
   const memoizedServiceListModal = useMemo(() => (
     <ServiceListModal
+    cmpType='demande'
       resetData={()=>{}}
       onSaveItems={() => {}}
       selectedServices={[]}
@@ -165,6 +166,7 @@ const DemandeService: FC = () => {
 
   const memoizedArticleListModal = useMemo(() => (
     <ArticleListModal
+    cmpType='demande'
       resetData={()=>{}}
       onSaveItems={() => {}}
       selectedArticles={[]}

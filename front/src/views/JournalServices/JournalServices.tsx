@@ -138,7 +138,7 @@ const JournalService: FC = () => {
                   className="form-select"
                   name="choixRecherche"
                   id="rech_par"
-                  aria-label="Default select example"
+                  aria-label="Default select example" 
                   value={searchBy} 
                   onChange={(e) => setSearchBy(e.target.value)}
                 >

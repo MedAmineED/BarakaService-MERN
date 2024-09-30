@@ -9,7 +9,7 @@ import './detailsStyle.css';
 import PaimentServices from '../../../ApiServices/PaimentServices';
 import Paiement from 'src/entities/Paiement';
 import { Form, Button } from 'react-bootstrap';
-import FcatureService from '../../../ApiServices/FcatureService';
+import FcatureService from '../../../ApiServices/FactureService';
 import Facture from 'src/entities/Facture';
 
 const DetailsService: React.FC = () => {

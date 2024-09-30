@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import GenericTable from '../../../components/table/GenericTable'
+import GenericTable from '../table/GenericTable'
 import React, { FC, useEffect, useState, useMemo, useCallback, ReactElement, ChangeEvent } from 'react'
-import CustomModal from '../../../components/customModal/CustomModal'
-import { FetchType } from '../../../util/types';
-import ServiceEntity from '../../../entities/ServiceEntity';
-import ServicesServices from '../../../ApiServices/ServicesServices';
-import ApiUrls from '../../../ApiUrl/ApiUrls';
-import Pagination from '../../../components/pagination/Pagination';
-import Article from '../../../entities/Article';
-import CustomCheckbox from '../customCheckBox/CustomCheckbox';
-import TableInput from '../tableInput/TableInput';
+import CustomModal from '../customModal/CustomModal'
+import { FetchType } from '../../util/types';
+import ServiceEntity from '../../entities/ServiceEntity';
+import ServicesServices from '../../ApiServices/ServicesServices';
+import ApiUrls from '../../ApiUrl/ApiUrls';
+import Pagination from '../pagination/Pagination';
+import Article from '../../entities/Article';
+import CustomCheckbox from '../../views/demandeservice/customCheckBox/CustomCheckbox';
+import TableInput from '../../views/demandeservice/tableInput/TableInput';
+import CustomCheckBoxFacture from '../../views/facture/customCheckBoxFacture/CustomCheckBoxFacture';
 // import { Checkbox } from 'react-bootstrap';
 
 type Item = ServiceEntity | Article;
@@ -34,15 +35,16 @@ interface Column {
 //----------------------------------------------------------------
 //---- propos of the principle component ----
 interface SrvModalProps {
-  onSaveItems: () => void;
   selectedServices: ServiceEntity[];
+  cmpType: string;  // Component type : if facture it will use checkBox of facture if demande it will use checkBox of demande
+  onSaveItems: () => void;
   resetData: () => void;
 }
 
 
 
 //---- modal component ----
-const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, resetData }) => {
+const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, resetData, cmpType }) => {
   const [serviceList, setServiceList] = useState<ServiceEntity[]>([]);
   const [searchBy, setSearchBy] = useState<string>('');
   const [searchValue, setSearchValue] = useState<string>('');
@@ -78,7 +80,7 @@ const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, re
       header: '',
       accessor: '',
       render: (clm: Column[], item: ServiceEntity | Article) => {
-        return <CustomCheckbox item={item} />;
+        return cmpType == "demande"? <CustomCheckbox item={item} /> : <CustomCheckBoxFacture item={item} />;
       }, 
     },
     { header: 'Libelle', accessor: 'libelle' },
@@ -87,7 +89,7 @@ const ServiceListModal: FC<SrvModalProps> = ({ onSaveItems, selectedServices, re
       header: 'Remise', 
       accessor: 'remise',
       render: (clm: Column[], item: ServiceEntity | Article) =>{
-        return <TableInput item={item} attribute='remise'/>;
+        return cmpType == "demande"? <TableInput item={item} attribute='remise'/> : null;
       }
     },
   ];

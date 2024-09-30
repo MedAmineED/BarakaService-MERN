@@ -2,7 +2,7 @@ import Facture from "./Facture"; // Import Facture entity if needed
 
 interface LigneFacture {
     id?: number;
-    id_fact: number;
+    id_fact?: number;
     reference: string;
     designation?: string;
     pu?: number;
@@ -12,6 +12,7 @@ interface LigneFacture {
     pht?: number;
     ptt?: number;
     facture?: Facture;
+    element? :number;
 }
 
 export default LigneFacture;

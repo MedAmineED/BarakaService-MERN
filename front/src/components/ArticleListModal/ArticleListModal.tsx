@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import GenericTable from '../../../components/table/GenericTable';
+import GenericTable from '../table/GenericTable';
 import React, { FC, useEffect, useState, useMemo, useCallback, ReactElement } from 'react';
-import CustomModal from '../../../components/customModal/CustomModal';
-import { FetchType } from '../../../util/types';
-import Article from '../../../entities/Article';
-import ArticleServices from '../../../ApiServices/ArticleServices';
-import ApiUrls from '../../../ApiUrl/ApiUrls';
-import Pagination from '../../../components/pagination/Pagination';
-import CustomCheckbox from '../customCheckBox/CustomCheckbox'; // Ensure this import is correct
-import TableInput from '../tableInput/TableInput';
-import ServiceEntity from '../../../entities/ServiceEntity';
+import CustomModal from '../customModal/CustomModal';
+import { FetchType } from '../../util/types';
+import Article from '../../entities/Article';
+import ArticleServices from '../../ApiServices/ArticleServices';
+import ApiUrls from '../../ApiUrl/ApiUrls';
+import Pagination from '../pagination/Pagination';
+import CustomCheckbox from '../../views/demandeservice/customCheckBox/CustomCheckbox'; // Ensure this import is correct
+import TableInput from '../../views/demandeservice/tableInput/TableInput';
+import ServiceEntity from '../../entities/ServiceEntity';
+import CustomCheckBoxFacture from '../../views/facture/customCheckBoxFacture/CustomCheckBoxFacture';
 
 // Define the type of column for the table
 interface Column {
@@ -24,48 +25,18 @@ interface Column {
   render?: (clm?: Column[], item?: Article) => ReactElement;
 }
 
-// Define columns for the article table
-const columns: Column[] = [
-  {
-    header: '',
-    accessor: '',
-    render: (clm, item: Article) => (
-      <CustomCheckbox item={item}/>
-    ),
-  },
-  { header: 'Identification', accessor: 'identification' },
-  { header: 'Designation', accessor: 'designation' },
-  { header: 'Prix', accessor: 'prix_vente', },
-  { header: 'Remise', accessor: '',
-    render: (clm: Column[], item: ServiceEntity | Article) =>{
-      return <TableInput item={item} 
-                        attribute='remise' 
-                        defaultValue={0}
-                        />;
-    }
-   },
-  { header: 'Quantité', accessor: 'qte', 
-    render: (clm: Column[], item: ServiceEntity | Article) =>{
-      return <TableInput item={item} 
-                        attribute='qte' 
-                        defaultValue={1}
-                        min = {1}
-                        />;
-    }
-   },
-  { header: 'Famille', accessor: 'famille' },
-
-];
 
 // Define the props for the modal component
 interface ArticleModalProps {
-  onSaveItems: () => void;
+  cmpType: string;  // Component type : if facture it will use checkBox of facture if demande it will use checkBox of demande
   selectedArticles: Article[];
+  onSaveItems: () => void;
   resetData: () => void;
 }
 
 // Modal component for displaying articles
 const ArticleListModal: FC<ArticleModalProps> = ({
+  cmpType,
   onSaveItems,
   selectedArticles,
 }) => {
@@ -76,7 +47,7 @@ const ArticleListModal: FC<ArticleModalProps> = ({
   const handleSearch = async () => {
     await fetchArticleList();
   };
-
+  
   // Fetch articles list with useCallback to avoid unnecessary re-renders
   const fetchArticleList = useCallback(async (start?: number, rowCpt?: number): Promise<FetchType> => {
     try {
@@ -84,7 +55,7 @@ const ArticleListModal: FC<ArticleModalProps> = ({
         `${ApiUrls.ARTICLE}?searchBy=${searchBy}&searchValue=${searchValue}&start=${start}&rowCpt=${rowCpt}`
       );
       setArticleList(response.articleList);
-
+      
       return {
         totalCount: response.totalCount,
         pageCount: rowCpt ? Math.round(response.totalCount / rowCpt) : 0,
@@ -97,6 +68,41 @@ const ArticleListModal: FC<ArticleModalProps> = ({
       };
     }
   }, [searchBy, searchValue]);
+  
+  
+  // Define columns for the article table
+  const columns: Column[] = [
+    {
+      header: '',
+      accessor: '',
+      render: (clm, item: Article) => {
+        return cmpType == "demande"? <CustomCheckbox item={item} /> : <CustomCheckBoxFacture item={item} />;
+      }
+      ,
+    },
+    { header: 'Identification', accessor: 'identification' },
+    { header: 'Designation', accessor: 'designation' },
+    { header: 'Prix', accessor: 'prix_vente', },
+    { header: 'Remise', accessor: '',
+      render: (clm: Column[], item: ServiceEntity | Article) =>{
+        return cmpType == "demande"? <TableInput item={item} 
+                          attribute='remise' 
+                          defaultValue={0}
+                          /> : null;
+      }
+     },
+    { header: 'Quantité', accessor: 'qte', 
+      render: (clm: Column[], item: ServiceEntity | Article) =>{
+        return cmpType == "demande"? <TableInput item={item} 
+                          attribute='qte' 
+                          defaultValue={1}
+                          min = {1}
+                          /> : null;
+      }
+     },
+    { header: 'Famille', accessor: 'famille' },
+  
+  ];
 
   // useMemo to memoize columns
   const memoizedColumns = useMemo(() => columns, []);

@@ -13,6 +13,9 @@ import JournalService from "../views/JournalServices/JournalServices";
 import DetailsDemande from "../views/JournalServices/detailsDemande/DetailsDemande";
 import MainDemandeService from "../views/demandeservice/MainDemandeService";
 import FactureCmp from '../views/facture/FactureCmp';
+import ListFacture from "../views/facture/ListFacture";
+import FactureEditable from "../views/facture/customFacture/FactureEditable";
+import MainFacture from "../views/facture/MainFacture";
 
 const Router: React.FC = () => {
   const routes: RouteObject[] = [
@@ -60,11 +63,19 @@ const Router: React.FC = () => {
           path: "listeDevis",
           element: <DevisList />,
         },
+        {
+          path: "listefacture",
+          element: <ListFacture />,
+        },
       ],
     },
     {
       path: "facture",
       element: <FactureCmp />,
+    },
+    {
+      path: "editfact",
+      element: <MainFacture />,
     },
     {
       path: "/login",
