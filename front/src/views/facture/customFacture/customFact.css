@@ -16,3 +16,12 @@
 .table td.custom-width-large {
     width: 100px !important;
 }
+
+.facture-date {
+    width: 90px;
+    padding: 0 !important;
+    /* border: 2px solid black !important; */
+}
+.facture-date:focus {
+    border: 2px solid ;
+}

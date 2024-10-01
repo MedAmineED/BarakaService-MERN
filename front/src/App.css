@@ -102,7 +102,7 @@ h6 {
 }
 
 input, select {
-  border: 2px solid #b7b67a !important;
+  border: 2px solid #b7b67a;
   background-color: white;
 }
 input:focus, select:focus {

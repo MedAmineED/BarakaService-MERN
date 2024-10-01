@@ -38,7 +38,7 @@ class Facture extends Model {
     @Unique
     @Column({
         type: DataType.INTEGER,
-        allowNull: false,
+        allowNull: true,
     })
     declare id_dem: number;
 
@@ -46,7 +46,7 @@ class Facture extends Model {
         type: DataType.STRING,
         allowNull: false,
     })
-    declare num_fact: string;
+    declare num_fact: string | null;
 
     @Column({
         type: DataType.DOUBLE,

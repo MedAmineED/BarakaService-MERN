@@ -6,6 +6,7 @@ import html2canvas from 'html2canvas';
 import ServiceListModal from '../../../components/servicesListModal/ServiceListModal';
 import ArticleListModal from '../../../components/ArticleListModal/ArticleListModal';
 import { SelectedItmsForFactureContext } from '../../../contexts/Contexts';
+import './customFact.css'
 
 interface LigneFacture {
   reference: string;
@@ -25,8 +26,6 @@ interface FactureCmpProps {
     tel: string;
   };
 
-  ligneFacture: LigneFacture[];
-
   // totals : {
   //   montant_HT: number,
   //   remise_total: number,
@@ -34,22 +33,33 @@ interface FactureCmpProps {
   //   montant_TTC: number,
   // },
   children: React.ReactNode;
-  onAddItem: () => void;
-  onRemoveItem: (index: number) => void;
-  onUpdateItem: (index: number, item: LigneFacture) => void;
 }
 
-const FactureCmp: React.FC<FactureCmpProps> = ({ societe, onAddItem, children }) => {
+const FactureCmp: React.FC<FactureCmpProps> = ({ societe, children }) => {
   const context = useContext(SelectedItmsForFactureContext);
-  const  { ligneFactureList, removeItemSelectXbutton, calculateTotals, totals, updateItem, timbreFiscale, setTimbreFiscale} = context;
+  const  { 
+            ligneFactureList, 
+            removeItemSelectXbutton,
+            calculateTotals, 
+            totals,
+            updateItem, 
+            timbreFiscale, 
+            setTimbreFiscale,
+            dateFacture,
+            setDateFacture} = context;
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editedItem, setEditedItem] = useState<LigneFacture | null>(null);
 
+
+
+  
   const handleEditClick = (index: number, item: LigneFacture) => {
     console.log(item)
     setEditIndex(index);
     setEditedItem({ ...item });
   };
+
+
 
   const handleSaveClick = (index: number) => {
     if (editedItem) {
@@ -77,6 +87,7 @@ const FactureCmp: React.FC<FactureCmpProps> = ({ societe, onAddItem, children })
   useEffect(()=>{
     console.log("runned")
     calculateTotals();
+    console.log(ligneFactureList)
   }, [ ligneFactureList, timbreFiscale])
 
 
@@ -114,7 +125,16 @@ const FactureCmp: React.FC<FactureCmpProps> = ({ societe, onAddItem, children })
           </Col>
           <Col md={4}>
             <ul className="list-unstyled facture-info">
-              <li><strong>Tunis le </strong> <input value={"2024-09-10"} onChange={(e)=> {console.log(e.target.value)}} type='date' style={{color: "black", textAlign : "end"}} /> 
+              <li><strong>Tunis le </strong><input 
+                                                className='facture-date'
+                                                value={dateFacture} 
+                                                onChange={(e)=> {setDateFacture(e.target.value)}} 
+                                                type='date' 
+                                                style={{color: "black", textAlign : "end",
+                                                  border: "none",
+                                                  outline: "none",
+                                            }} 
+                                                /> 
               { 
               // "24-05-2024"
               // ((factureState?.date_facture + "").split(' ')[0]).split('T')[0].split('-').reverse().reduce((cr, nxt)=>cr+"-"+nxt)

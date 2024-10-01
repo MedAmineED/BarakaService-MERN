@@ -7,6 +7,14 @@ import DemandeServiceEntity from '../entities/DemandeServiceEntity';
 import LigneFacture from '../entities/LigneFacture';
 import Facture from 'src/entities/Facture';
 
+const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Add leading 0 if needed
+    const day = String(today.getDate()).padStart(2, '0'); // Add leading 0 if needed
+    return `${year}-${month}-${day}`;
+  };
+
 
 type Item = ServiceEntity | Article | { libelle: string; prix: number} | DemandeServiceEntity;
 
@@ -16,16 +24,7 @@ interface SelectForFactureProviderProps {
   }
 
 const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({children})=> {
-    const [ligneFactureList, setLigneFactureList] = useState<LigneFacture[]>([{
-        reference: "Ref-" + ( 1),
-        designation: "New Item",
-        pu: 0,
-        qte: 1,
-        tva: "19",
-        remise: 0,
-        pht: 0,
-        ptt: 0,
-      }]);
+    const [ligneFactureList, setLigneFactureList] = useState<LigneFacture[]>([]);
 
       // const [ligneDemandeListe, setLigneDemandeListe] = useState<LigneDemande[] | []>([]);
       
@@ -40,7 +39,7 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
         });
         
         //datre
-        const [dateFacture, setDateFacture] = useState(new Date()); 
+        const [dateFacture, setDateFacture] = useState(getCurrentDate()); 
 
         //---------facture finale --------------------
         const [factureFinal, setFactureFinal] = useState<Facture | null>();
@@ -178,7 +177,7 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
             return {
                 ...item,
                 pht: parseFloat((item.pu * item.qte).toFixed(3)),
-                ptt: parseFloat(((item.pht * (1 + (item.tva / 100)) - (item.remise * item.qte))).toFixed(3)),
+                ptt: parseFloat((((item.pu * (1 + (item.tva / 100))* item.qte) - (item.remise * item.qte))).toFixed(3)),
             }
         });
         setLigneFactureList([...calculatedLignes]);
@@ -211,6 +210,23 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
     };
 
 
+    //---- create facture final --------------------
+    const createFactureFinal = (factureHeader : {  date_facture: Date;
+                                                    client: string;
+                                                    id_dem: number;
+                                                    num_fact: string;
+                                                }) => {
+        const factureFinal: Facture = {
+            ...factureHeader,
+            pht: totals.montant_HT,
+            tax: totals.montant_TVA,
+            remise_total: totals.remise_total,
+            timbre_fiscal: timbreFiscale,
+            prix_ttc: totals.montant_TTC,
+            ligneFacture: ligneFactureList,
+        };
+        setFactureFinal(factureFinal);
+    }
 
 
     //----reset all data --------------------
@@ -235,6 +251,8 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
             // setTotals,
             // setLigneDemandeListe,
             timbreFiscale,
+            dateFacture,
+            setDateFacture,
             setTimbreFiscale,
             handleItemSelect,
             transformFromItemToLigneFacture,
@@ -242,6 +260,8 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
             removeItemSelect,
             removeItemSelectXbutton,
             updateItem,
+            factureFinal,
+            createFactureFinal,
             // reset,
         }}>
             {children}

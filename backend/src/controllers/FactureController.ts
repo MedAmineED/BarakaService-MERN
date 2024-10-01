@@ -24,7 +24,7 @@ export const createFacture = async (req: Request, res: Response) => {
             
             
             if((currentYear - factureYear) == 0){
-                const latestFactNum = parseInt(latestFacture?.num_fact.split('/')[0] as string) || 0;
+                const latestFactNum = parseInt(latestFacture?.num_fact?.split('/')[0] as string) || 0;
                 factNum = latestFactNum + 1;
             }else {
                 factNum = 1;

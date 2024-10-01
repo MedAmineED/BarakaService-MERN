@@ -32,6 +32,7 @@ const FactureCmp: React.FC = () => {
   const [factureState, setFactureState] = useState<Facture | null>();
   const [factNum, setFactNum] = useState<number>(0);
 
+
   const fetchSociete = async (): Promise<void> => {
     try {
       const response = await SocieteService.GetListSociete(`${ApiUrls.SOCIETE}`);
@@ -50,7 +51,7 @@ const FactureCmp: React.FC = () => {
     }
   };
 
-  //--- creta new facture ----
+  //--- create new facture ----
   const createFacture = async (newFct: Facture) => {
     try {
           const fetchedFacture = await FcatureService.GetFactureByIdDem(ApiUrls.FACTURE, demandeService.id_dem);

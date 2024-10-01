@@ -4,6 +4,7 @@ import ServiceEntity from '../entities/ServiceEntity';
 import Article from '../entities/Article';
 import DemandeServiceEntity from '../entities/DemandeServiceEntity';
 import LigneFacture from '../entities/LigneFacture';
+import Facture from '../entities/Facture';
 
 
 
@@ -50,13 +51,23 @@ export const SelectedItmsForFactureContext = createContext<{
       montant_TTC: number,
     },
     timbreFiscale : number,
+    dateFacture: Date,
+    factureFinal: Facture,
+    setFactureFinal: Dispatch<SetStateAction<Facture>>,
     setTimbreFiscale: Dispatch<SetStateAction<number>>,
+    setDateFacture: Dispatch<SetStateAction<Date>>,
     transformFromItemToLigneFacture: (item: ItemToFact)=> void,
     calculateTotals: ()=> void,
     handleItemSelect: (item: ItemToFact) => void,
     updateItem: (index: number, item: LigneFacture) => void,
     removeItemSelect: (item: ItemToFact) => void,
     removeItemSelectXbutton: (item: LigneFacture) => void,
+    createFactureFinal : (factHeader : {  date_facture: Date;
+                                            client: string;
+                                            id_dem: number;
+                                            num_fact: string;
+                                        })=> void,
+    submitFacture : ()=> Promise<void>
 } | undefined>(undefined);
 
 
