@@ -10,6 +10,7 @@ import { FetchType, InputFieldConfig } from '../../util/types';
 import GenericTable from '../../components/table/GenericTable';
 import { useNavigate } from 'react-router-dom';
 import './listFacture.css'
+import { Button } from 'react-bootstrap';
 
 
 interface SeeDeatailsProps {
@@ -18,7 +19,7 @@ interface SeeDeatailsProps {
 const SeeDetails :FC<SeeDeatailsProps> = ({ id })=> {
     const navigate = useNavigate();
   
-    return <button onClick={()=> {navigate("/editfact", { state: { id }})}} className='btn btn-primary w-100 p-0'>
+    return <button onClick={()=> {navigate("/showfact", { state: { id, mode : "show" }})}} className='btn btn-primary w-100 p-0'>
               <i className="bi bi-receipt-cutoff"></i>
           </button>
   }
@@ -28,20 +29,23 @@ interface Column {
   header: string;
   accessor: string;
   render?: (columns: Column[], dataLine: Facture) => ReactElement;
+  style?: React.CSSProperties;
+  unit? : string;
+  isFixed? : boolean;
 }
 
 const columns: Column[] = [
-  { header: 'Date Facture', accessor: 'date_facture' },
-  { header: 'Client', accessor: 'client' },
-  { header: 'Numéro Facture', accessor: 'num_fact' },
-  { header: 'Montant PHT', accessor: 'pht' },
-  { header: 'Taxe', accessor: 'tax' },
-  { header: 'Remise Totale', accessor: 'remise_total' },
-  { header: 'Prix TTC', accessor: 'prix_ttc' },
+  { header: 'Date Facture', accessor: 'date_facture', style : {textAlign: "start"} },
+  { header: 'Client', accessor: 'client', style : {textAlign: "start"} },
+  { header: 'Numéro Facture', accessor: 'num_fact', style : {textAlign: "start"} },
+  { header: 'Montant PHT', accessor: 'pht', style : {textAlign: "end"}, unit: "DT", isFixed: true},
+  { header: 'TVA', accessor: 'tax', style : {textAlign: "end"}, unit: "DT", isFixed: true},
+  { header: 'Remise Totale', accessor: 'remise_total', style : {textAlign: "end"}, unit: "DT", isFixed: true },
+  { header: 'Prix TTC', accessor: 'prix_ttc', style : {textAlign: "end"}, unit: "DT", isFixed: true },
   { header: 'Details', accessor: '',
-    render : ()=>{ 
-        return <SeeDetails/>;
-        return null;
+    render : (col: Column, item: Facture)=>{ 
+        console.log(item)
+        return <SeeDetails id={item.id_fact}/>;
       }
   }
 ];
@@ -69,8 +73,11 @@ const ListFacture: FC = () => {
   const fetchFactureList = async (start?: number, rowCpt?: number): Promise<FetchType> => {
     try {
       const response = await FactureService.GetListFacture(`${ApiUrls.FACTURE}?searchBy=${searchBy}&searchValue=${searchValue}&start=${start}&rowCpt=${rowCpt}`);
-      setFactureList(response.factureList.map((facture) => {
-        return { ...facture, date_facture: new Date(facture.date_facture).toLocaleDateString('en-US') };
+      console.log("response")
+      console.log(response)
+      setFactureList(response.factureList.map((facture: Facture) => {
+        const formatDate = (facture.date_facture+"").split("T")[0].split("-").reverse().join("/");
+        return { ...facture, date_facture: formatDate };
       }));
 
       return { totalCount: response.totalCount, pageCount: rowCpt ? Math.round(response.totalCount / rowCpt) : 0 };
@@ -82,6 +89,10 @@ const ListFacture: FC = () => {
       };
     }
   };
+
+  const navigateToCreateFact = async (id : number) => {
+    navigate('/creerfact', { state: { id, mode: "create"  }});
+  }
 
   const handleSearch = async () => {
     await fetchFactureList();
@@ -97,8 +108,12 @@ const ListFacture: FC = () => {
       <ItemHeader
         title="Liste de Facture"
         buttonText="Ajouter Facture"
-        onButtonClick={() => { /* Logic to add a new invoice */ }}
-      />
+        onButtonClick={() => { navigateToCreateFact() }}
+      >
+        <Button className="btn custom-btn btn-outline-primary" title='Ajouter Facture' onClick={() => { navigateToCreateFact()}}>
+          Creation de Facture
+        </Button>
+      </ItemHeader>
       
       <div className="container position-center demande-section" data-aos="fade-up" data-aos-delay="100">
         <hr />

@@ -4,8 +4,7 @@ import ServiceEntity from '../entities/ServiceEntity';
 import Article from '../entities/Article';
 import LigneDemande from '../entities/LigneDemande';
 
-
-type Item = ServiceEntity | Article | { libelle: string; prix: number};
+type Item = ServiceEntity | Article | { libelle: string; prix: number, element : number};
 
 interface MainSelectedContextProps { 
     children: React.ReactNode;
@@ -72,11 +71,14 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
                 quantite: 1,
             } as LigneDemande;
         }else {
+            // test verif id in list
+            // add new id
+            const uniqueId = parseInt(Math.random() * 1000000 + ""); 
             ligne = {
                 demande_srv: 0,
                 type: "custom",
                 categorie: "autre",
-                element: 0,
+                element: uniqueId,
                 reference: "",
                 designation: item.libelle,
                 prix: item.prix,
@@ -102,14 +104,18 @@ const MainSelectedContext: React.FC<MainSelectedContextProps> = ({children})=> {
 
     //---- remove from selection
     const removeItemSelectXbutton = (item: LigneDemande)=>{
-        setSelectedItems(prevItems => prevItems.filter(i => (i.id!== item.element && i.type== item.type)));
-        removeFromListLigneDemandeXbutton(item);
+        if(item.type == "service" || item.type == "article"){
+            setSelectedItems(prevItems => prevItems.filter(i => (!(i.id == item.element && i.type== item.type))));
+            removeFromListLigneDemandeXbutton(item);
+        } else {
+            removeFromListLigneDemandeXbutton(item);
+     }
     }
     const removeFromListLigneDemandeXbutton = (item: LigneDemande)=>{
         console.log(item)
         setLigneDemandeListe(prevItems => prevItems.filter(i =>{
             console.log(i.element + '==' + item.element)
-            return i.element!== item.element && i.type == item.type;
+            return !(i.element == item.element && i.type == item.type);
             }));
     };
 

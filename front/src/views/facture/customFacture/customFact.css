@@ -25,3 +25,164 @@
 .facture-date:focus {
     border: 2px solid ;
 }
+
+
+
+/* -------------- */
+
+
+:root {
+    --body-font: 'Roboto', sans-serif;
+  }
+  
+  /* Bootstrap Override */
+  #invoice {
+    --bs-font-sans-serif: 'Roboto', sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 2;
+    --bs-body-color: #383735;
+    --bs-primary: #c01635;
+    --bs-primary-rgb: #c01635;
+    --bs-border-color: #eeeeee;
+  }
+  
+  #invoice {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+  
+  .header-facture {
+    border-bottom: 2px solid #c01635;
+    border-top: 2px solid #c01635;
+    padding: 10px 0; /* Add padding */
+    text-align: left;
+  }
+  
+  .nom-societe {
+    font-size: 1.3em;
+    text-align: start;
+  }
+  
+  .societe-info {
+    font-size: 0.9em;
+    text-align: start;
+  }
+  
+  .facture-info {
+    font-size: 0.9em;
+    text-align: right; /* Right-align */
+    margin-top: -20px; /* Adjust if necessary */
+  }
+  .client-info {
+    text-align: center;
+  }
+  /* Table adjustments */
+  
+  
+  .col-number {
+    width: 5% !important; /* Adjust column width */
+    text-align: center; /* Align content */
+  }
+  
+  .tm-col {
+    width: auto;
+    text-align: left; /* Left-align the description */
+  }
+  
+  /* Footer / Totals section */
+  .tfoot-small {
+    font-size: 0.8rem;
+    font-weight: bolder;
+    border: 2px solid #cccccc00;
+    text-align: right; /* Align totals to the right */
+  }
+  
+  .tfoot-small td {
+    padding: 5px;
+  }
+  
+  .facture-table .row-even {
+    background-color: #5a5a5a !important;
+  }
+  
+  /* .facture-table tbody tr, .facture-table thead tr,
+  .facture-table tbody td,
+  .facture-table thead th,
+  .facture-table thead .col-number
+  {
+    border: 1px solid black;
+  } */
+  
+  .tfoot-small input,
+  .tfoot-small label,
+  .tfoot-small span {
+    font-size: 0.8rem;
+  }
+  
+  .has-letter {
+    text-align: left;
+  }
+  
+  .has-number {
+    text-align: end;
+  }
+  
+  .tfoot-small tr {
+    border-width: 1px;
+  }
+  
+  .invoice-totals {
+    text-align: right;
+    font-weight: bold;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-top: 2px solid #c01635;
+  }
+  
+  .invoice-totals span {
+    font-size: 1.1rem; /* Emphasize totals */
+  }
+  
+  @media print {
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    
+    .invoice {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 800px; /* Adjust as necessary */
+    }
+  
+    .invoice h2 {
+      text-align: center;
+      margin: 0;
+    }
+  
+    .client-info,
+    .totals {
+      margin-top: 20px;
+    }
+  
+    .totals .total-item {
+      font-weight: bold;
+    }
+  
+    @page {
+      margin: 0; /* Remove default margins */
+    }
+  }
+  
+  
+  
+  
+  
+  
+  

@@ -37,6 +37,9 @@ class LigneFacture extends Model {
     @Column(DataType.DOUBLE)
     declare pu: number;
 
+    @Column(DataType.INTEGER)
+    declare element: number;
+
 
     @Column({
         type: DataType.INTEGER,
@@ -68,6 +71,12 @@ class LigneFacture extends Model {
         allowNull: true
     })
     declare ptt: number;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true
+    })
+    declare typr: string;
 
     // Associations
     @BelongsTo(() => Facture, { as: 'facture', foreignKey: 'id_fact' })

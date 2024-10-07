@@ -12,16 +12,16 @@ import { FetchType, InputFieldConfig } from 'src/util/types';
 import GenericTable from '../../components/table/GenericTable';
 
 const columns = [
-  { header: 'CIN', accessor: 'cin' },
-  { header: 'Nom', accessor: 'nom' },
-  { header: 'Date de Recrutement', accessor: 'recrutement',
+  { header: 'CIN', accessor: 'cin', style : { textAlign: "start" } },
+  { header: 'Nom', accessor: 'nom', style : { textAlign: "start" } },
+  { header: 'Date de Recrutement', accessor: 'recrutement',  style : { textAlign: "start" },
     render: (undefined, item: Employee) => {
     const formatDate = (item.recrutement + "").split('T')[0];
-      return <span>{formatDate}</span>;
+      return <span style = { {textAlign : "start"} }>{formatDate}</span>;
     },
    },
-  { header: 'Mobile', accessor: 'mobile' },
-  { header: 'Salaire', accessor: 'salaire' },
+  { header: 'Mobile', accessor: 'mobile',  style : { textAlign: "start" }},
+  { header: 'Salaire', accessor: 'salaire',  style : { textAlign: "end" }, isFixed : true },
 ];
 
 const inputFields: InputFieldConfig[] = [

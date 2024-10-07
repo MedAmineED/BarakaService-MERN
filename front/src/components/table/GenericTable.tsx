@@ -14,7 +14,10 @@ interface Column {
     min: number;
     max: string;
   };
+  style?:  React.CSSProperties;
   render? : (columns?: Column[], lineData?: InputFieldConfig) => ReactElement;
+  isFixed? : boolean;
+  unit? : string;
 }
 
 interface GenericTableProps {
@@ -82,7 +85,7 @@ const GenericTable: FC<GenericTableProps> = ({
                 ):
                 (
                   // simple columns
-                  <td key={colIndex}>{item[column.accessor]}</td>
+                  <td style= {column.style? column.style : {}} key={colIndex}>{(column.isFixed? item[column.accessor].toFixed(3) : item[column.accessor])} {column.unit? column.unit : ""}</td>
                 )
               ))}
               {/* to add action column */}

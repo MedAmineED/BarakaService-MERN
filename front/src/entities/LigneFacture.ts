@@ -13,6 +13,7 @@ interface LigneFacture {
     ptt?: number;
     facture?: Facture;
     element? :number;
+    type? : string;
 }
 
 export default LigneFacture;

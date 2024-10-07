@@ -5,7 +5,10 @@ import Article from '../entities/Article';
 import LigneDemande from '../entities/LigneDemande';
 import DemandeServiceEntity from '../entities/DemandeServiceEntity';
 import LigneFacture from '../entities/LigneFacture';
-import Facture from 'src/entities/Facture';
+import Facture from '../entities/Facture';
+import FactureService from '../ApiServices/FactureService';
+import ApiUrls from '../ApiUrl/ApiUrls';
+import { useLocation } from 'react-router-dom';
 
 const getCurrentDate = () => {
     const today = new Date();
@@ -24,6 +27,8 @@ interface SelectForFactureProviderProps {
   }
 
 const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({children})=> {
+    const location = useLocation();
+    const { id } = location.state;
     const [ligneFactureList, setLigneFactureList] = useState<LigneFacture[]>([]);
 
       // const [ligneDemandeListe, setLigneDemandeListe] = useState<LigneDemande[] | []>([]);
@@ -72,6 +77,7 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
      
         // Check if the item is a service
         if (('libelle' in item) && item.id) {
+            console.log(item)
             ligne = {
                 reference: "Ref-" + (item.id),
                 designation: (item as ServiceEntity).libelle,
@@ -81,8 +87,10 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
                 remise: (item as ServiceEntity).remise,
                 pht: (item as ServiceEntity).pu,
                 ptt: (item as ServiceEntity).pu,
-                element: item.id
+                element: item.id,
+                type: "service"
             };
+            console.log(ligne)
         } 
         // Check if the item is an article
         else if ('qte' in item) {
@@ -95,7 +103,8 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
                 remise: 0,
                 pht: (item as Article).prix_vente,
                 ptt: 0,
-                element: item.id
+                element: item.id,
+                type: "article"
             };
         } else if('matricule' in item) {
             ligneDemandeList = (item as DemandeServiceEntity).ligneDemandes?.map((el) => {
@@ -109,11 +118,14 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
                     remise: el.remise,
                     pht: el.prix * el.quantite,
                     ptt: parseFloat(((el.prix * (1 + (el.tva / 100)) - el.remise) * el.quantite).toFixed(3)),
+                    type: el.type
                 };
             }) || [];
         } else {
+            const uniqueId = parseInt(Math.random() * 1000000 + ""); 
+            console.log(uniqueId)
             ligne = {
-                element: item.libelle + item.prix,
+                element: uniqueId,
                 reference: "Ref-",
                 designation: item.libelle,
                 pu: item.prix,
@@ -198,14 +210,14 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
 
     //---- remove from x button
     const removeItemSelectXbutton = (item: LigneFacture)=>{
-        setSelectedItems(prevItems => prevItems.filter(i => (i.id!== item.element && i.type== item.type)));
+        setSelectedItems(prevItems => prevItems.filter(i => (!(i.id == item.element && i.type == item.type))));
         removeFromListLigneFactureXbutton(item);
     }
     const removeFromListLigneFactureXbutton = (item: LigneDemande)=>{
         console.log(item)
         setLigneFactureList(prevItems => prevItems.filter(i =>{
             console.log(i.element + '==' + item.element)
-            return i.element!== item.element && i.type == item.type;
+            return !(i.element == item.element && i.type == item.type);
             }));
     };
 
@@ -226,6 +238,19 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
             ligneFacture: ligneFactureList,
         };
         setFactureFinal(factureFinal);
+    }
+
+
+    const getFactureById = async ()=> {
+        try {
+            if(id){
+                const response = await FactureService.GetFactureById(`${ApiUrls.FACTURE}`, id);
+                setFactureFinal(response);
+                setLigneFactureList(response.ligneFacture);
+            }
+          } catch (err) {
+            console.log("Error fetching facture:", err);
+          }
     }
 
 
@@ -262,6 +287,7 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
             updateItem,
             factureFinal,
             createFactureFinal,
+            getFactureById
             // reset,
         }}>
             {children}

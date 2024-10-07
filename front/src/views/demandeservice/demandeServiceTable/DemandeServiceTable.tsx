@@ -9,17 +9,18 @@ import LigneDemande from '../../../entities/LigneDemande';
 interface Column {
   header: string;
   accessor: string;
+  style?: React.CSSProperties; 
 }
 
 const columns : Column[] = [
-  { header: 'libelle', accessor: 'designation' },
-  { header: 'prix unitaire', accessor: 'prix' },
-  { header: 'quantite', accessor: 'quantite' },
-  { header: 'prix HT', accessor: 'prix' },
-  { header: 'remise U', accessor: 'remise' },
-  { header: 'tax', accessor: 'tax' },
-  { header: 'tax total', accessor: 'tax_total' },
-  { header: 'prix TTC', accessor: 'prix_TTC' },
+  { header: 'libelle', accessor: 'designation', style : {textAlign: "start"}  },
+  { header: 'prix unitaire', accessor: 'prix', style : {textAlign: "end"}  },
+  { header: 'quantite', accessor: 'quantite', style : {textAlign: "end"}  },
+  { header: 'prix HT', accessor: 'prix',  style : {textAlign: "end"} },
+  { header: 'remise U', accessor: 'remise',  style : {textAlign: "end"} },
+  { header: 'tax', accessor: 'tax',  style : {textAlign: "end"} },
+  { header: 'tax total', accessor: 'tax_total',  style : {textAlign: "end"} },
+  { header: 'prix TTC', accessor: 'prix_TTC',  style : {textAlign: "end"} },
 ];
 
 interface DemandeServiceTableProps {
@@ -98,7 +99,7 @@ const DemandeServiceTable: FC<DemandeServiceTableProps> = () => {
                   <i onClick={() => onDelete(item)} className="bi bi-x-circle text-danger" style={{ cursor: 'pointer' }}></i>
                 </td>
                 {columns.map((column, colIndex) => (
-                  <td key={colIndex} className="text-center">{item[column.accessor]}</td>
+                  <td key={colIndex} style={column.style}>{item[column.accessor]}</td>
                 ))}
               </tr>
             ))}

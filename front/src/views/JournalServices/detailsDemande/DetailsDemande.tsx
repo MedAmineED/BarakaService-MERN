@@ -120,7 +120,7 @@ const DetailsService: React.FC = () => {
   const handlePaiement = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     try {
-      if(demandeService && (paiemntDetails.montant > 0) && ((parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3))) <= (demandeService?.prix_ttc + timbreFiscal))){
+      if(demandeService && (paiemntDetails.montant > 0) && ((parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3))) <= parseFloat((demandeService?.prix_ttc + timbreFiscal).toFixed(3)))){
           await PaimentServices.PaiementOperation(`${ApiUrls.PAIMENTS}`, id, parseFloat((timbreFiscal + demandeService.prix_ttc).toFixed(3)), paiemntDetails);
           setTimbreFiscal(0);
           await fetchDemandeService();
@@ -131,10 +131,12 @@ const DetailsService: React.FC = () => {
           })
           // refresh the page after the paiement is added
     }
-    else if(demandeService && parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)) > demandeService?.prix_ttc){
+    else if(demandeService && parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)) > parseFloat((demandeService?.prix_ttc + timbreFiscal).toFixed(3))){
+      console.log(parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)))
+      console.log( (demandeService?.prix_ttc + timbreFiscal))
       setAlertMessage({
         isError: true,
-        message: 'Mantant maximale est ' + parseFloat((demandeService.prix_ttc - paiementSum).toFixed(3)),
+        message: 'Mantant maximale est ' + parseFloat(((demandeService.prix_ttc + timbreFiscal) - paiementSum).toFixed(3)),
       })
     }
     else{
@@ -320,25 +322,25 @@ const DetailsService: React.FC = () => {
 
                       return (
                         <tr key={index}>
-                          <td style={{ padding: '0.25rem' }}>
+                          <td style={{ padding: '0.25rem', textAlign : "start" }}>
                             {ld.designation}
                             <br />
                             <small className="text-muted">{ld.type}</small>
                           </td>
-                          <td className="text-right" style={{ padding: '0.25rem' }}>
-                            {ld.prix} DT
+                          <td className="text-right" style={{ padding: '0.25rem', textAlign : "end" }}>
+                            {ld.prix.toFixed(3)} DT
                           </td>
-                          <td className="text-right" style={{ padding: '0.25rem' }}>
+                          <td className="text-right" style={{ padding: '0.25rem', textAlign : "end" }}>
                             {ld.quantite}
                           </td>
-                          <td className="text-right" style={{ padding: '0.25rem' }}>
+                          <td className="text-right" style={{ padding: '0.25rem', textAlign : "end"  }}>
                             {(ld.remise * ld.quantite).toFixed(3)} DT
                             <br />
                             <small className="text-muted">
                               Unitaire: {(ld.remise).toFixed(3)} DT
                             </small>
                           </td>
-                          <td className="text-right" style={{ padding: '0.25rem' }}>
+                          <td className="text-right" style={{ padding: '0.25rem', textAlign : "end"  }}>
                             {taxT.toFixed(3)} DT
                             <br />
                             <small className="text-muted">
@@ -364,17 +366,17 @@ const DetailsService: React.FC = () => {
                       <th>Total:</th>
                       <th></th>
                       <th></th>
-                      <th>
+                      <th style={ {textAlign : "start"} }>
                         Remise:
                         <br />
                         {totals.totalRemise.toFixed(3)} DT
                       </th>
-                      <th>
+                      <th style={ {textAlign : "start"}}>
                         Tax:
                         <br />
                         {totals.totalTax.toFixed(3)} DT
                       </th>
-                      <th>
+                      <th style={ {textAlign : "start"}}>
                         TTC:
                         <br />
                         {totals.totalTTC.toFixed(3)} DT

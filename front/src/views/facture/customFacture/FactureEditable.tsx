@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import CustomFacture from './CustomFacture'; // Import your CustomFacture component
 import SocieteService from '../../../ApiServices/SocieteService';
 import ApiUrls from '../../../ApiUrl/ApiUrls';
@@ -9,11 +9,15 @@ import ServiceDivers from '../../../components/serviceDivers/ServiceDivers';
 import DemandeServiceListModal from '../../../components/demndeServiceModal/DemndeServiceListModal';
 import { SelectedItmsForFactureContext } from '../../../contexts/Contexts';
 import FcatureService from '../../../ApiServices/FactureService';
-import Facture from '../../../entities/Facture';
+import { useLocation, useNavigate } from 'react-router-dom';
+import FactureService from '../../../ApiServices/FactureService';
 
 const FactureEditable: React.FC = () => {
   const context = useContext(SelectedItmsForFactureContext);
-  const { createFactureFinal, factureFinal, dateFacture } = context;
+  const location = useLocation();
+  const { id, mode } = location.state;
+  const navigate = useNavigate();
+  const { createFactureFinal, factureFinal, dateFacture, getFactureById, ligneFactureList, timbreFiscale, calculateTotals, totals } = context;
   const [factNum, setFactNum] = useState<number>(0);
   const [isFactureReady, setIsFactureReady] = useState<boolean>(false);
 
@@ -40,41 +44,80 @@ const FactureEditable: React.FC = () => {
       console.error('Error fetching data:', err);
     }
   };
+  
+   
+  const saveUpdates = async()=> {
+    try {
+      console.log("factureFinal mel update ")
+      console.log(factureFinal)
+      const response = await FactureService.UpdateFacture(`${ApiUrls.FACTURE}`, id, factureFinal);
+      console.log("Facture updated successfully", response);
+    }
+    catch (err) {
+      console.error('Error updating facture:', err);
+    }
+  }
 
+ 
   const prepareFacture = () => {
+    console.log("dateFacture")
+    console.log(dateFacture)
     // Prepare the facture but don't submit it yet
     createFactureFinal({
-      date_facture: dateFacture || new Date(), 
+      date_facture: dateFacture, 
       client: "", // Replace with actual client data
       id_dem: null, // Replace with actual id_dem if applicable
       num_fact: factNum.toString(),
-    });
-
+    }); 
     // Set flag to indicate facture is ready for submission
     setIsFactureReady(true);
   };
 
-  // This effect will run when factureFinal is updated and the facture is ready
-  useEffect(() => {
-    console.log("factureFinal : ")
-    console.log(factureFinal)
-    if (isFactureReady && factureFinal) {
-      const submitFacture = async () => {
-        try {
-          const data = await FcatureService.AddFacture(ApiUrls.FACTURE, factureFinal);
-          console.log("Facture added successfully", data);
-        } catch (error) {
-          console.error('Error adding facture:', error);
-        } finally {
-          // Reset the flag after submitting the facture
-          setIsFactureReady(false);
-        }
-      };
-      submitFacture();
+
+  const submitFacture = async () => {
+    try {
+      const data = await FcatureService.AddFacture(ApiUrls.FACTURE, factureFinal);
+      console.log("Facture added successfully", data);
+    } catch (error) {
+      console.error('Error adding facture:', error);
+    } finally {
+      // Reset the flag after submitting the facture
+      setIsFactureReady(false);
     }
-  }, [factureFinal, isFactureReady]);
+  }
 
   useEffect(() => {
+    calculateTotals()
+  },[ligneFactureList, timbreFiscale, dateFacture])
+
+
+  useEffect(() => {
+    if(mode == "create"){
+      createFactureFinal({
+        date_facture: dateFacture, 
+        client: "", // Replace with actual client data
+        id_dem: null, // Replace with actual id_dem if applicable
+        num_fact: factNum.toString(),
+      }); 
+    }
+    else if(mode == "edit") {
+      createFactureFinal({
+        id: id,
+        date_facture: factureFinal?.date_facture, 
+        client: "", // Replace with actual client data
+        id_dem: null, // Replace with actual id_dem if applicable
+        num_fact: factureFinal?.num_fact,
+      }); 
+    }
+
+  },[totals])
+
+
+
+
+  useEffect(() => {
+    console.log("idddddddddd ", id)
+    getFactureById();
     getLatestNumber();
     fetchSociete();
   }, []);
@@ -117,17 +160,42 @@ const FactureEditable: React.FC = () => {
     <div>
       <CustomFacture societe={societe}>
         <Container style={{ margin: '40px 0 20px' }}>
+        {
+          (mode == "edit" || mode == "create" )&&         
           <Row>
             <Col className="d-flex justify-content-start">{memoizedServiceListModal}</Col>
             <Col className="d-flex justify-content-start">{memoizedArticleListModal}</Col>
             <Col>{memoizedCustomServiceModal}</Col>
             <Col>{memoizedDemandeServiceModal}</Col>
           </Row>
+        }
         </Container>
       </CustomFacture>
 
       {/* Prepare facture on button click */}
-      <Button onClick={prepareFacture}>Enregistrer la facture</Button>
+      {
+        (mode == "create") ?
+         <Button onClick={submitFacture}>
+           Enregistrer la facture
+         </Button> 
+         :
+        (mode == "edit") ?
+        <div className='d-flex justify-content-center gap-3'>
+           <Button className='btn-secondary' onClick={()=> {navigate('/showfact', { state : {id, mode : "show"} })}}>
+           Annuler
+         </Button> 
+         <Button  className='btn-success' onClick={saveUpdates}>
+           Enregistrer les modifications
+         </Button> 
+        </div>
+         :
+        <Button 
+            onClick={()=> { navigate('/editfact', { state : {id, mode : "edit"} }) }}
+         >
+              Modifier la facture
+        </Button>
+      }
+      
     </div>
   );
 };

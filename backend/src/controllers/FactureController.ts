@@ -40,7 +40,7 @@ export const createFacture = async (req: Request, res: Response) => {
 
         // Create Facture without including LigneFacture initially
         const facture = await Facture.create(
-            { ...factureData, date_facture: dateTime, num_fact: `${factNum + "/" + currentYear}` },
+            { ...factureData, num_fact: `${factNum + "/" + currentYear}` },
             { transaction }
         );
 
@@ -164,20 +164,70 @@ export const getFactureByDemId = async (req: Request, res: Response) => {
 
 // Update a Facture by ID
 export const updateFacture = async (req: Request, res: Response) => {
-    try {
-        const [updated] = await Facture.update(req.body, {
-            where: { id_fact: req.params.id }
-        });
-        if (updated) {
-            const updatedFacture = await Facture.findByPk(req.params.id);
-            res.status(200).json(updatedFacture);
-        } else {
-            res.status(404).json({ error: 'Facture not found' });
+        const transaction = await sequelizeConnexion.transaction();
+    
+        try {
+            const { id, ligneFacture, ...factureData } = req.body;
+            
+
+            console.log("id === ", id)
+            // Check if the Facture exists
+            const facture = await Facture.findByPk(id);
+            if (!facture) {
+                console.log("fact not found")
+                return res.status(404).json({ error: 'Facture not found' });
+            }
+    
+            // Update the Facture details
+            await facture.update(factureData, { transaction });
+    
+            // Handle LigneFacture updates
+            const existingLigneFactures = await LigneFacture.findAll({ where: { id } });
+
+            console.log('old :')
+            const oldData = existingLigneFactures.map(ext => {
+                return ext.dataValues
+            })
+            console.log(oldData)
+            console.log("new :")
+            console.log(ligneFacture);
+    
+            // Remove LigneFactures that are not present in the new data
+            for (const existingLigne of oldData) {
+                if (!ligneFacture.some((lf: LigneFacture) => lf.id === existingLigne.id)) {
+                    console.log("destroy " + existingLigne.id)
+                    await existingLigne.destroy({ transaction });
+                }
+            }
+    
+            // Add or Update LigneFactures
+            for (const ligne of ligneFacture) {
+                console.log(ligne)
+                if (ligne.id) {
+                    // Update existing LigneFacture
+                    const existingLigne = await LigneFacture.findByPk(ligne.id);
+                    if (existingLigne) {
+                        console.log("update facture is already")
+                        await existingLigne.update(ligne, { transaction });
+                    }
+                } else {
+                    // Add new LigneFacture
+                    ligne.id_fact = id;
+                    console.log("create new LigneFacture")
+                    await LigneFacture.create(ligne, { transaction });
+                }
+            }
+    
+            await transaction.commit();
+            console.log("succcccess")
+            res.status(200).json({ message: 'Facture updated successfully', facture });
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Failed to update facture:', error);
+            res.status(500).json({ error: 'Failed to update facture', details: error });
         }
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to update facture' });
-    }
 };
+
 
 // Delete a Facture by ID
 export const deleteFacture = async (req: Request, res: Response) => {

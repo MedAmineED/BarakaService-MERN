@@ -35,9 +35,8 @@ const EditButton : FC<InputModalProps> = ({ title, inputFields, onSave, id, fetc
         setShow(false);
         resetFormData();
     };
-  const handleShow = () => setShow(true);
-
-  const resetFormData = () => {
+    const handleShow = () => setShow(true);
+    const resetFormData = () => {
     const newFormData: { [key: string]: any } = {};
   
     for (const key in formData) {
@@ -50,7 +49,6 @@ const EditButton : FC<InputModalProps> = ({ title, inputFields, onSave, id, fetc
         }
       }
     }
-  
     setFormData(newFormData);
   };
 

@@ -15,7 +15,7 @@ factureRoutes.post('/', createFacture);
 factureRoutes.get('/', getAllFactures);
 factureRoutes.get('/latestnumber', getLatestNumberOfFactures);
 factureRoutes.get('/bydemande/:id', getFactureByDemId);
-// factureRoutes.get('/:id', getFactureById);
+factureRoutes.get('/:id', getFactureById);
 factureRoutes.put('/:id', updateFacture);
 factureRoutes.delete('/:id', deleteFacture);
 

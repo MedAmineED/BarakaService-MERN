@@ -328,15 +328,15 @@ const ListeArticles: FC = () => {
               <tbody>
                 {articleList.map((article, index) => (
                   <tr key={article.id}>
-                    <td>{article.famille}</td> {/* Assuming Famille ID is used here */}
-                    <td>{article.identification}</td>
-                    <td>{article.designation}</td>
-                    <td>{article.qte}</td>
-                    <td>{article.qte_min}</td>
-                    <td>{article.qte_max}</td>
-                    <td>{article.prix_achat}</td>
-                    <td>{article.prix_vente}</td>
-                    <td>{article.tva}%</td>
+                    <td style={{textAlign: "start"}}>{article.famille}</td> {/* Assuming Famille ID is used here */}
+                    <td style={{textAlign: "start"}}>{article.identification}</td>
+                    <td style={{textAlign: "start"}}>{article.designation}</td>
+                    <td  style={{textAlign: "end"}}>{article.qte}</td>
+                    <td  style={{textAlign: "end"}}>{article.qte_min} DT</td>
+                    <td  style={{textAlign: "end"}}>{article.qte_max}</td>
+                    <td  style={{textAlign: "end"}}>{article.prix_achat.toFixed(3)} DT</td>
+                    <td  style={{textAlign: "end"}}>{article.prix_vente.toFixed(3)} DT</td>
+                    <td  style={{textAlign: "end"}}>{article.tva}%</td>
                     <td className='action-cell'>
                       <EditButton 
                             title="Modifier un Article" 

@@ -74,7 +74,19 @@ const Router: React.FC = () => {
       element: <FactureCmp />,
     },
     {
+      path: "createfact",
+      element: <MainFacture />,
+    },
+    {
       path: "editfact",
+      element: <MainFacture />,
+    },
+    {
+      path: "showfact",
+      element: <MainFacture />,
+    },
+    {
+      path: "creerfact",
       element: <MainFacture />,
     },
     {

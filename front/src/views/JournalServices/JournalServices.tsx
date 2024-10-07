@@ -40,10 +40,10 @@ interface Column {
 }
 
 const columns = [
-  { header: 'Date Demande', accessor: 'date_demande' },
-  { header: 'Matricule', accessor: 'matricule' },
-  { header: 'Client', accessor: 'client' },
-  { header: 'Employee', accessor: 'employer' },
+  { header: 'Date Demande', accessor: 'date_demande', style : {textAlign: "start"},  },
+  { header: 'Matricule', accessor: 'matricule', style : {textAlign: "start"} },
+  { header: 'Client', accessor: 'client', style : {textAlign: "start"} },
+  { header: 'Employee', accessor: 'employer', style : {textAlign: "start"} },
   { header: 'Payé', accessor: 'payer',  
     render : (clmns: Column[], dataLine: DemandeServiceEntity) : ReactElement=> {
       return dataLine[clmns[4].accessor] == 1? 
@@ -52,8 +52,8 @@ const columns = [
                             <div className='text-warning'><i className="bi bi-patch-exclamation"></i> Partiel</div>         
                 : <div className='text-danger'><i className="bi bi-patch-minus-fill"></i> Impayé</div>
   } },
-  { header: 'Montant TTC', accessor: 'prix_ttc' },
-  { header: 'Marque', accessor: 'marque' },
+  { header: 'Montant TTC', accessor: 'prix_ttc', style : {textAlign: "end"}, isFixed : true, unit : "DT" },
+  { header: 'Marque', accessor: 'marque', style : {textAlign: "start"} },
   { header: 'Details', accessor: '', 
     render : (clmns: Column[], dataLine: DemandeServiceEntity)=>{ 
       if(dataLine.id_dem)

@@ -67,7 +67,8 @@ export const SelectedItmsForFactureContext = createContext<{
                                             id_dem: number;
                                             num_fact: string;
                                         })=> void,
-    submitFacture : ()=> Promise<void>
+    submitFacture : ()=> Promise<void>,
+    getFactureById : (id: number)=> Promise<void>,
 } | undefined>(undefined);
 
 

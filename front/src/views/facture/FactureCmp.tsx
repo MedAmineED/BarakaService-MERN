@@ -174,82 +174,110 @@ const FactureCmp: React.FC = () => {
   
     // Add table of products (unchanged)
     const tableColumn = ['N°', 'Reference', 'Désignation', 'PU', 'QTE', 'TVA %', 'Remise', 'PHT', 'PTT'];
-    const tableRows = factureState?.ligneFacture.map((fct, index) => [
-      index + 1,
-      fct.reference,
-      fct.designation,
-      fct.pu.toFixed(3) + ' DT',
-      fct.qte,
-      fct.tva + '%',
-      (fct.remise).toFixed(3) + ' DT',
-      (fct.pht).toFixed(3) + ' DT',
-      (fct.ptt).toFixed(3) + ' DT'
-    ]);
-  
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: yPos,
-      theme: 'grid',
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-      },
-      headStyles: {
-        fillColor: "#c01635",
-        textColor: "#ffffff",
-        fontStyle: 'bold',
-      },
-      margin: { left: margin, right: margin },
-    });
-  
-    // Add Totals at the end with border
-    yPos = doc.lastAutoTable.finalY + 4;
-    const totalsWidth = 40;
-    const totalsHeight = 30;
-    const totalsX = doc.internal.pageSize.getWidth() - margin - totalsWidth;
-    
-    doc.setDrawColor("#444444");
+  const tableRows = factureState?.ligneFacture.map((fct, index) => [
+    { content: (index + 1).toString(), styles: { halign: 'center' } },
+    { content: fct.reference, styles: { halign: 'left' } },
+    { content: fct.designation, styles: { halign: 'left' } },
+    { content: fct.pu.toFixed(3) + ' DT', styles: { halign: 'right' } },
+    { content: fct.qte.toString(), styles: { halign: 'right' } },
+    { content: fct.tva + '%', styles: { halign: 'right' } },
+    { content: fct.remise.toFixed(3) + ' DT', styles: { halign: 'right' } },
+    { content: fct.pht.toFixed(3) + ' DT', styles: { halign: 'right' } },
+    { content: fct.ptt.toFixed(3) + ' DT', styles: { halign: 'right' } }
+  ]);
 
-    // Draw border around totals
-    doc.rect(totalsX, yPos, totalsWidth, totalsHeight);
+  doc.autoTable({
+    head: [tableColumn],
+    body: tableRows,
+    startY: yPos,
+    theme: 'grid',
+    styles: {
+      fontSize: 8,
+      cellPadding: 2,
+    },
+    headStyles: {
+      fillColor: "#c01635",
+      textColor: "#ffffff",
+      fontStyle: 'bold',
+      halign: 'center',
+    },
+    columnStyles: {
+      0: { halign: 'center' },  // N°
+      1: { halign: 'left' },    // Reference
+      2: { halign: 'left' },    // Désignation
+      3: { halign: 'right' },   // PU
+      4: { halign: 'right' },   // QTE
+      5: { halign: 'right' },   // TVA %
+      6: { halign: 'right' },   // Remise
+      7: { halign: 'right' },   // PHT
+      8: { halign: 'right' },   // PTT
+    },
+    margin: { left: margin, right: margin },
+  });
   
-    // Add total texts
-    doc.setFontSize(8);
-    doc.text(`PHT: ${totals.subtotal.toFixed(3)} DT`, totalsX + 2, yPos + 5);
-    doc.text(`TAX: ${totals.taxTotal} DT`, totalsX + 2, yPos + 10);
-    doc.text(`Remise Total: ${totals.remiseTotal.toFixed(3)} DT`, totalsX + 2, yPos + 15);
-    doc.text(`Timbre Fiscal: ${timbreFiscal} DT`, totalsX + 2, yPos + 20);
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'bold');
-    doc.text(`PTT: ${demandeService.prix_ttc} DT`, totalsX + 2, yPos + 27);
-  
-    // Add total in words
-    yPos = doc.internal.pageSize.getHeight() - 30; // Position for the total in words
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    const totalInWords = "Arrêtée la présente facture à la somme de .....................";
-    doc.text(totalInWords, doc.internal.pageSize.getWidth() / 2, yPos, { align: 'center' });
+// Add Totals at the end with border
+yPos = doc.lastAutoTable.finalY + 4;
+const totalsWidth = 50; // You can adjust this value
+const totalsHeight = 30; // You can adjust this value
+const totalsX = doc.internal.pageSize.getWidth() - margin - totalsWidth;
 
-    // Add signature line
-    yPos = doc.internal.pageSize.getHeight() - 15; // Position for the signature line
-    doc.setFontSize(8);
-    doc.text("Cachet & Signature", doc.internal.pageSize.getWidth() - margin - 30, yPos);
-    
-    // Add a line for the signature
-    const signatureLineWidth = 60;
-    const signatureLineX = doc.internal.pageSize.getWidth() - margin - signatureLineWidth;
-    doc.line(signatureLineX, yPos + 5, doc.internal.pageSize.getWidth() - margin, yPos + 5);
+// Draw border around totals
+doc.setDrawColor("#444444");
+doc.rect(totalsX, yPos, totalsWidth, totalsHeight);
 
-    // Download the PDF
-    doc.save(`Facture_${1}_2024.pdf`);
+// Define an array of totals and their labels for easy processing
+const totalsArray = [
+  { label: "PHT", value: `${totals.subtotal.toFixed(3)} DT` },
+  { label: "TAX", value: `${totals.taxTotal} DT` },
+  { label: "Remise Total", value: `${totals.remiseTotal.toFixed(3)} DT` },
+  { label: "Timbre Fiscal", value: `${timbreFiscal} DT` },
+];
+
+// Define the X positions for labels and values
+const labelX = totalsX + 2; // You can adjust this value
+const valueX = totalsX + totalsWidth - 2; // You can adjust this value
+
+// Add total texts with aligned values
+doc.setFontSize(8);
+
+totalsArray.forEach((item, index) => {
+  const textYPos = yPos + 5 + index * 5;
+  doc.text(item.label, labelX, textYPos); // Left-align text
+  doc.text(item.value, valueX, textYPos, { align: 'right' }); // Right-align value
+});
+
+// Add bold text for the total amount (PTT)
+doc.setFont(undefined, 'bold');
+doc.setFontSize(10);
+doc.text("PTT:", labelX, yPos + 27);
+doc.text(`${demandeService.prix_ttc} DT`, valueX, yPos + 27, { align: 'right' });
+// Add total in words
+yPos = doc.internal.pageSize.getHeight() - 30; // Position for the total in words
+doc.setFontSize(10);
+doc.setFont(undefined, 'normal');
+const totalInWords = "Arrêtée la présente facture à la somme de .....................";
+doc.text(totalInWords, doc.internal.pageSize.getWidth() / 2, yPos, { align: 'center' });
+
+// Add signature line
+yPos = doc.internal.pageSize.getHeight() - 15; // Position for the signature line
+doc.setFontSize(8);
+doc.text("Cachet & Signature", doc.internal.pageSize.getWidth() - margin - 30, yPos);
+
+// Add a line for the signature
+const signatureLineWidth = 60;
+const signatureLineX = doc.internal.pageSize.getWidth() - margin - signatureLineWidth;
+doc.line(signatureLineX, yPos + 5, doc.internal.pageSize.getWidth() - margin, yPos + 5);
+
+// Download the PDF
+doc.save(`Facture_${1}_2024.pdf`);
+
   };
 
   return (
     <>
     <section id="invoice" className='p-0'>
       <Container className="">
-        <Row id= {'fc-header'} className="py-3 align-items-center header-facture">
+        <Row id= {'fc-header'}  className="py-3 align-items-center header-facture">
           <Col md={4}>
             <ul className="list-unstyled societe-info">
               <li><strong>Societe :</strong> {societe.nom}</li>
@@ -268,12 +296,15 @@ const FactureCmp: React.FC = () => {
             </ul>
           </Col>
           <Col md={4}>
-            <ul className="list-unstyled client-info">
-              <li><h4>Facture N° : {factureState?.num_fact? factureState?.num_fact : 
-                                     factNum + "/" + (factureState?.date_facture+"").split('T')[0].split('-')[0]
-                                    }</h4></li>
-              <li><strong>Client :</strong> {demandeService.client? demandeService.client : ".............."}</li>
-              <li><strong>Tel :</strong> {"................"}</li>
+            <ul  className="list-unstyled d-flex flex-column client-info w-100 align-items-center">
+              <div style={{width: 'fit-content'}}>
+                <li style={{textAlign: "start"}}><h4>Facture N° : {factureState?.num_fact? factureState?.num_fact : 
+                                       factNum + "/" + (factureState?.date_facture+"").split('T')[0].split('-')[0]
+                                      }</h4></li>
+                <li style={{textAlign: "start"}}><strong>Client :</strong> {demandeService.client? demandeService.client :  "........................"}</li>
+                <li style={{textAlign: "start"}}><strong>Tel :</strong> {"............................."}</li>
+                <li style={{textAlign: "start"}}><strong>Adresse :</strong> {"..................."}</li>
+              </div>
             </ul>
           </Col>
           <Col md={4}>
@@ -303,39 +334,39 @@ const FactureCmp: React.FC = () => {
                   <td className='col-number has-letter'>{index + 1}</td>
                   <td className="last-column has-letter">{ligneFct.reference}</td>
                   <td className="last-column has-letter">{ligneFct.designation}</td>
-                  <td className="last-column has-number">{ligneFct.pu} DT</td>
+                  <td className="last-column has-number">{ligneFct.pu?.toFixed(3)} DT</td>
                   <td className="last-column has-number">{ligneFct.qte}</td>
                   <td className="last-column has-number">{ligneFct.tva}%</td>
-                  <td className="last-column has-number">{(ligneFct.remise).toFixed(3)} DT</td>
-                  <td className="last-column has-number">{ligneFct.pht} DT</td>
-                  <td className="last-column has-number">{(ligneFct.ptt)} DT</td>
+                  <td className="last-column has-number">{ligneFct.remise?.toFixed(3)} DT</td>
+                  <td className="last-column has-number">{ligneFct.pht?.toFixed(3)} DT</td>
+                  <td className="last-column has-number">{(ligneFct.ptt?.toFixed(3))} DT</td>
                 </tr>
               ))}
             </tbody>
           <tfoot className="tfoot-small">
             <tr>
               <td colSpan={7}></td>
-              <td>PHT</td>
+              <td  style={{textAlign: "start"}}>PHT</td>
               <td>{(totals.subtotal).toFixed(3)} DT</td>
             </tr>
             <tr>
               <td colSpan={7}></td>
-              <td>TAX</td>
+              <td  style={{textAlign: "start"}}>TVA</td>
               <td>{totals.taxTotal} DT</td>
             </tr>
             <tr>
               <td colSpan={7}></td>
-              <td>RemiseToal</td>
+              <td  style={{textAlign: "start"}}>Remise Total</td>
               <td>{(totals.remiseTotal).toFixed(3)} DT</td>
             </tr>
             <tr>
               <td colSpan={7}></td>
-              <td>Timbre Fiscale</td>
+              <td  style={{textAlign: "start"}}>Timbre Fiscale</td>
               <td>{timbreFiscal} DT</td>
             </tr>
             <tr>
               <td colSpan={7}></td>
-              <td className="border text-primary fs-5 fw-bold">PTT</td>
+              <td className="border text-primary fs-5 fw-bold"  style={{textAlign: "start"}}>PTT</td>
               <td className="border text-primary fs-5 fw-bold">{demandeService.prix_ttc} DT</td>
             </tr>
           </tfoot>

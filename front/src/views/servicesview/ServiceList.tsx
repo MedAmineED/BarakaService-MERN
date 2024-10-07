@@ -15,10 +15,10 @@ import CategorieServices from '../../ApiServices/CategorieServices';
 
 
 const columns = [
-  { header: 'Categorie', accessor: 'categorie' },
-  { header: 'Libelle', accessor: 'libelle' },
-  { header: 'Prix Unitaire', accessor: 'pu' },
-  { header: 'Remise', accessor: 'remise' },
+  { header: 'Categorie', accessor: 'categorie', style : {textAlign: "start"} },
+  { header: 'Libelle', accessor: 'libelle', style : {textAlign: "start"} },
+  { header: 'Prix Unitaire', accessor: 'pu', style : {textAlign: "end"}, isFixed : true, unit : "DT" },
+  { header: 'Remise', accessor: 'remise', style : {textAlign: "end"}, isFixed : true, unit : "DT" },
 ];
 
 

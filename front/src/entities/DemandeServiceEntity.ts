@@ -14,7 +14,7 @@ interface DemandeServiceEntity {
     prix_ttc: number;
     payer: number;
     marque: string;
-    ligneDemandes?: LigneDemande[] | [];
+    lignedemande?: LigneDemande[] | [];
     paiements?: Paiement[] | [];
 }
 
