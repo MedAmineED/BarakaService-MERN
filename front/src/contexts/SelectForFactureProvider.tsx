@@ -229,13 +229,13 @@ const SelectForFactureProvider: React.FC<SelectForFactureProviderProps> = ({chil
                                                     num_fact: string;
                                                 }) => {
         const factureFinal: Facture = {
-            ...factureHeader,
             pht: totals.montant_HT,
             tax: totals.montant_TVA,
             remise_total: totals.remise_total,
             timbre_fiscal: timbreFiscale,
             prix_ttc: totals.montant_TTC,
             ligneFacture: ligneFactureList,
+            ...factureHeader,
         };
         setFactureFinal(factureFinal);
     }

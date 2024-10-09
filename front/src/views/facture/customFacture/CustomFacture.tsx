@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import FactureService from '../../../ApiServices/FactureService';
 import ApiUrls from '../../../ApiUrl/ApiUrls';
 
+
 interface LigneFacture {
   reference: string;
   designation: string;
@@ -111,6 +112,7 @@ const FactureCmp: React.FC<FactureCmpProps> = ({ societe, children }) => {
   }
 
   useEffect(()=> {
+    console.log(factureFinal)
     getLatestNumber();
   }, [])
   
@@ -267,15 +269,15 @@ const FactureCmp: React.FC<FactureCmpProps> = ({ societe, children }) => {
                             onChange={(e) => {setTimbreFiscale(parseFloat(e.target.value));}} 
                             /> 
                             :
-                            0.000.toFixed(3)
-              }
+                            factureFinal?.timbre_fiscal.toFixed(3)
+                    }
                     DT
               </td>
             </tr>
             <tr>
               <td colSpan={mode !== "show"? 8 : 7}></td>
               <td className="border text-primary fs-5 fw-bold" style={{textAlign: "start"}}>PTT</td>
-              <td className="border text-primary fs-5 fw-bold" style={{textAlign: "end"}} >{totals.montant_TTC} DT</td>
+              <td className="border text-primary fs-5 fw-bold" style={{textAlign: "end"}} >{factureFinal?.prix_ttc.toFixed(3)} DT</td>
             </tr>
           </tfoot>
         </Table>

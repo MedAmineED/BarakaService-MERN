@@ -59,12 +59,17 @@ const FactureCmp: React.FC = () => {
                const data = await FcatureService.AddFacture(ApiUrls.FACTURE, newFct);
                console.log("facture service added successfully", data);
           } else {
+            setFactureState(fetchedFacture)
                console.log("facture service already exists");
           }
     } catch (error) {
       console.error('Error adding facture service:', error);
     }
   };
+
+  useEffect(() => {
+    console.log(factureState)
+  }, []);
   
 
   useEffect(() => {
@@ -121,9 +126,13 @@ const FactureCmp: React.FC = () => {
   
       setFactureState(newFacture);
     }
+
+    console.log("facture aaa")
+    console.log(facture)
+    console.log(factureState)
   
     // Check if facture needs to be created
-    if (!facture && factureState) {
+    if (!factureState) {
       createFacture(factureState);
     }
   }, [demandeService, facture, factureState, totals.isRunned]);
@@ -309,7 +318,7 @@ doc.save(`Facture_${1}_2024.pdf`);
           </Col>
           <Col md={4}>
             <ul className="list-unstyled facture-info">
-              <li><strong>Tunis le </strong> {((factureState?.date_facture + "").split(' ')[0]).split('T')[0].split('-').reverse().reduce((cr, nxt)=>cr+"-"+nxt)}</li>
+              <li><strong>Tunis le </strong> {((factureState?.date_facture + "").split(' ')[0]).split('T')[0].split('-').reverse().reduce((cr, nxt)=>cr+"/"+nxt)}</li>
             </ul>
           </Col>
         </Row>
