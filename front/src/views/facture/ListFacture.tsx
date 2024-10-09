@@ -68,6 +68,21 @@ const ListFacture: FC = () => {
   const [dateOption, setDateOption] = useState<string >("date");
 
   const navigate = useNavigate();
+  
+  const handleCahngeDateOption = (e: React.ChangeEvent<HTMLSelectElement>)=> {
+    setDateOption(e.target.value);
+    if(e.target.value === "date"){
+      console.log(e.target.value)
+      setEndDate(null);
+    }
+  }
+
+  const handleEndDate = (e: React.ChangeEvent<HTMLInputElement>)=> {
+    setEndDate(e.target.value);
+  }
+  const handleStartDate = (e: React.ChangeEvent<HTMLInputElement>)=> {
+    setStartDate(e.target.value);
+  }
 
   const fetchFactureList = async (start?: number, rowCpt?: number): Promise<FetchType> => {
     try {
@@ -77,7 +92,11 @@ const ListFacture: FC = () => {
         url += `&searchValue=${searchValue}`;
       } else if (searchBy === 'date_facture') {
         if (startDate) url += `&startDate=${startDate}`;
-        if (endDate) url += `&endDate=${endDate}`;
+        if (endDate){
+          console.log("end date")
+          console.log(endDate);
+           url += `&endDate=${endDate}`;
+        }
       }
 
       const response = await FactureService.GetListFacture(url);
@@ -96,6 +115,8 @@ const ListFacture: FC = () => {
       };
     }
   };
+
+
 
   const navigateToCreateFact = async (id: number) => {
     navigate('/creerfact', { state: { id, mode: "create" } });
@@ -148,7 +169,7 @@ const ListFacture: FC = () => {
                         <label></label>
                         <select
                           value = {dateOption}
-                          onChange= {(e)=> {setDateOption(e.target.value)}}
+                          onChange= {(e)=> {handleCahngeDateOption(e)}}
                           style={{
                             width: '80px'
                           }}
@@ -162,7 +183,7 @@ const ListFacture: FC = () => {
                       <div  className='d-flex gap-2 align-items-center'>
                         <label>De</label>
                         <input
-                          onChange={(e) => setStartDate(e.target.value)}
+                          onChange={(e) => handleStartDate(e)}
                           value={startDate || ''}
                           type="date"
                           id="startDate"
@@ -172,7 +193,7 @@ const ListFacture: FC = () => {
                       {dateOption == "plage"? <div className='d-flex gap-2 align-items-center'>
                         <label>à</label>
                         <input
-                          onChange={(e) => setEndDate(e.target.value)}
+                          onChange={(e) => handleEndDate(e)}
                           value={endDate || ''}
                           type="date"
                           id="endDate"

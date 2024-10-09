@@ -34,7 +34,6 @@ export const createFacture = async (req: Request, res: Response) => {
         const { ligneFacture, ...factureData } = req.body;
         
         if (!ligneFacture || ligneFacture.length === 0) {
-            console.log({ error: 'LigneFacture cannot be empty' });
             return res.status(400).json({ error: 'LigneFacture cannot be empty' });
         }
 
@@ -65,7 +64,7 @@ export const getLatestNumberOfFactures = async (req: Request, res: Response) => 
         const latestFacture = await Facture.findOne({
             order: [['id_fact', 'DESC']], // Order by primary key (or timestamp) to get the last added
         });
-            res.status(200).json({latestnumber : parseInt((latestFacture?.num_fact)?.split('/')[0] as string)});
+        res.status(200).json({latestnumber : parseInt((latestFacture?.num_fact)?.split('/')[0] as string)});
     } catch (error) {
         console.log({ error: 'Failed to fetch latest number of factures', details: error });
         res.status(500).json({ error: 'Failed to fetch latest number of factures', details: error });
@@ -86,9 +85,6 @@ export const getAllFactures = async (req: Request, res: Response) => {
         if (searchBy && searchValue) {
             console.log("Performing search on:", searchBy, "with value:", searchValue);
             switch (searchBy) {
-                case 'date_facture':
-                    whereCondition.date_facture = { [Op.eq]: new Date(searchValue as string) };
-                    break;
                 case 'num_fact':
                     whereCondition.num_fact = { [Op.like]: `%${searchValue}%` };
                     break;
@@ -107,13 +103,7 @@ export const getAllFactures = async (req: Request, res: Response) => {
                 [Op.between]: [new Date(startDate as string), new Date(endDate as string)]
             };
         } else if (startDate) {
-            whereCondition.date_facture = {
-                [Op.gte]: new Date(startDate as string)
-            };
-        } else if (endDate) {
-            whereCondition.date_facture = {
-                [Op.lte]: new Date(endDate as string)
-            };
+            whereCondition.date_facture = new Date(startDate as string);
         }
 
         // Fetch total count of factures
@@ -143,7 +133,6 @@ export const getAllFactures = async (req: Request, res: Response) => {
             prix_ttc: facture.prix_ttc,
             ligneFacture: facture.ligneFacture
         }));
-
         res.json({ factureList: formattedFactures, totalCount });
     } catch (error) {
         console.error('Error fetching factures:', error);
