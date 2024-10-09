@@ -85,6 +85,7 @@ const FactureCmp: React.FC = () => {
       const taxTotal = parseFloat((demandeService.ligneDemandes)
         .reduce((sum, item) => sum + (item.prix * (item.tva / 100) * item.quantite), 0).toFixed(3));
   
+        console.log('totals is created ')
       setTotals({
         subtotal,
         remiseTotal,
@@ -120,16 +121,17 @@ const FactureCmp: React.FC = () => {
       };
   
       setFactureState(newFacture);
+    }else if(facture){
+      setFactureState(facture);
     }
 
   
     // Check if facture needs to be created
-    if (!factureState) {
+    if (!facture && factureState) {
       createFacture(factureState);
     }
   }, [demandeService, facture, factureState, totals.isRunned]);
   
-
 
 
   

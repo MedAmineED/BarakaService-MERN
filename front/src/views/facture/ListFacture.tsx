@@ -72,7 +72,6 @@ const ListFacture: FC = () => {
   const handleCahngeDateOption = (e: React.ChangeEvent<HTMLSelectElement>)=> {
     setDateOption(e.target.value);
     if(e.target.value === "date"){
-      console.log(e.target.value)
       setEndDate(null);
     }
   }
@@ -93,8 +92,6 @@ const ListFacture: FC = () => {
       } else if (searchBy === 'date_facture') {
         if (startDate) url += `&startDate=${startDate}`;
         if (endDate){
-          console.log("end date")
-          console.log(endDate);
            url += `&endDate=${endDate}`;
         }
       }

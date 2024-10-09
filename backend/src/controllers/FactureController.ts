@@ -34,7 +34,8 @@ export const createFacture = async (req: Request, res: Response) => {
         const { ligneFacture, ...factureData } = req.body;
         
         if (!ligneFacture || ligneFacture.length === 0) {
-            return res.status(400).json({ error: 'LigneFacture cannot be empty' });
+            res.status(400).json({ error: 'LigneFacture cannot be empty' });
+            return;
         }
 
         // Create Facture without including LigneFacture initially

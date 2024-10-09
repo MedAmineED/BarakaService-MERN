@@ -9,7 +9,6 @@ interface getType {
 class FactureService {
     
     async GetListFacture(endpoint: string): Promise<getType> {
-        console.log(endpoint)
         try {
             const response = await axios.get<getType>(endpoint, {
                 headers: {

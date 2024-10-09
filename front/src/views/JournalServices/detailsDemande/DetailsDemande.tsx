@@ -494,6 +494,7 @@ const DetailsService: React.FC = () => {
                         Payer <i className="bi bi-cash"></i>
                       </Button>
                       <Button
+                        disabled={demandeService?.payer === 0}
                         type="submit"
                         variant="primary"
                         size="lg"
