@@ -53,10 +53,8 @@ const FactureEditable: React.FC = () => {
    
   const saveUpdates = async()=> {
     try {
-      console.log("factureFinal mel update ")
       console.log(factureFinal)
       const response = await FactureService.UpdateFacture(`${ApiUrls.FACTURE}`, id, factureFinal);
-      console.log("Facture updated successfully", response);
       navigate('/showfact', { state : {id, mode : "show"} })
     }
     catch (err) {
@@ -71,7 +69,6 @@ const FactureEditable: React.FC = () => {
   const submitFacture = async () => {
     try {
       const data = await FcatureService.AddFacture(ApiUrls.FACTURE, factureFinal);
-      console.log("Facture added successfully", data);
       navigate('/baraka/listefacture')
     } catch (error) {
       console.error('Error adding facture:', error);
@@ -244,7 +241,6 @@ const FactureEditable: React.FC = () => {
 
 
   useEffect(() => {
-    console.log("idddddddddd ", id)
     getFactureById();
     getLatestNumber();
     fetchSociete();

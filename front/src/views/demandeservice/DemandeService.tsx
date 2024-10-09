@@ -115,7 +115,6 @@ const DemandeService: FC = () => {
         isError: false,
         message: 'Demande de service ajoutée avec succès !',
       })
-      console.log("demande service added successfully", data);
       resetAll();
     } catch (error) {
       console.error('Error adding demande service:', error);

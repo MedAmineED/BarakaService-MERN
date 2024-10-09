@@ -132,8 +132,6 @@ const DetailsService: React.FC = () => {
           // refresh the page after the paiement is added
     }
     else if(demandeService && parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)) > parseFloat((demandeService?.prix_ttc + timbreFiscal).toFixed(3))){
-      console.log(parseFloat((parseFloat(paiemntDetails.montant+"") + paiementSum).toFixed(3)))
-      console.log( (demandeService?.prix_ttc + timbreFiscal))
       setAlertMessage({
         isError: true,
         message: 'Mantant maximale est ' + parseFloat(((demandeService.prix_ttc + timbreFiscal) - paiementSum).toFixed(3)),
@@ -145,7 +143,6 @@ const DetailsService: React.FC = () => {
         isError: true,
         message: "Erreur : Vous devez ajouter un montant valide."
       })
-      console.log("can not add paiement because it is not available");
     }
     } catch (err) {
       console.error('Error adding paiement:', err);

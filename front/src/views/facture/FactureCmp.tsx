@@ -57,19 +57,14 @@ const FactureCmp: React.FC = () => {
           const fetchedFacture = await FcatureService.GetFactureByIdDem(ApiUrls.FACTURE, demandeService.id_dem);
           if(!fetchedFacture){
                const data = await FcatureService.AddFacture(ApiUrls.FACTURE, newFct);
-               console.log("facture service added successfully", data);
           } else {
             setFactureState(fetchedFacture)
-               console.log("facture service already exists");
           }
     } catch (error) {
       console.error('Error adding facture service:', error);
     }
   };
 
-  useEffect(() => {
-    console.log(factureState)
-  }, []);
   
 
   useEffect(() => {
@@ -127,9 +122,6 @@ const FactureCmp: React.FC = () => {
       setFactureState(newFacture);
     }
 
-    console.log("facture aaa")
-    console.log(facture)
-    console.log(factureState)
   
     // Check if facture needs to be created
     if (!factureState) {

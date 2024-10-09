@@ -154,11 +154,9 @@ const ListeServices: FC = () => {
     const validationError = validateService(service);
     try {
       if (validationError) {
-        console.log("Validation Error:", validationError);
         throw new Error(validationError);
       }
       await ServiceService.AddService(ApiUrls.SERVICE, service);
-      console.log("Service added successfully.");
     } catch (error) {
       console.error("Error adding service:", error);
     }
@@ -172,7 +170,6 @@ const ListeServices: FC = () => {
       remise: parseFloat(formData.remise),
     };
     try {
-      console.log("service data :", numericData);
       await addService(numericData as ServiceEntity);
       await fetchServiceList(0, 50);
     } catch (error) {
@@ -184,7 +181,6 @@ const ListeServices: FC = () => {
     try {
       await ServiceService.DeleteService(ApiUrls.SERVICE, id);
       await fetchServiceList(0, 50);
-      console.log("Service deleted successfully.");
     } catch (error) {
       console.error("Error deleting service:", error);
     }

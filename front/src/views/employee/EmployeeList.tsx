@@ -89,7 +89,6 @@ const EmployeeList: FC = () => {
       }
       await EmployeeServices.UpdateEmployee(ApiUrls.EMPLOYEE, id, employee);
       await fetchEmployeeList(0, 50);
-      console.log("Employee edited successfully.");
     } catch (error) {
       console.error("Error editing employee:", error);
     }
@@ -117,7 +116,6 @@ const EmployeeList: FC = () => {
         throw new Error(validationError);
       }
       await EmployeeServices.AddEmployee(ApiUrls.EMPLOYEE, employee);
-      console.log("Employee added successfully.");
     } catch (error) {
       console.error("Error adding employee:", error);
     }
@@ -130,7 +128,6 @@ const EmployeeList: FC = () => {
       specialite: parseInt(formData.specialite),
     };
     try {
-      console.log("employee data :", numericData);
       await addEmployee(numericData as Employee);
     } catch (error) {
       console.error("Error adding employee:", error);
@@ -142,7 +139,6 @@ const EmployeeList: FC = () => {
     try {
       await EmployeeServices.DeleteEmployee(ApiUrls.EMPLOYEE, id);
       await fetchEmployeeList(0, 50);
-      console.log("Employee deleted successfully.");
     } catch (error) {
       console.error("Error deleting employee:", error);
     }

@@ -164,7 +164,6 @@ const ListeArticles: FC = () => {
         throw new Error(validationError);
       }
       await ArticleServices.UpdateArticle(ApiUrls.ARTICLE, id, article);
-      console.log("Article edited successfully.");
     } catch (error) {
       console.error("Error editing article:", error);
     }
@@ -197,11 +196,9 @@ const ListeArticles: FC = () => {
     const validationError = validateArticle(article);
     try {
       if (validationError) {
-        console.log("Validation Error:", validationError);
         throw new Error(validationError);
       }
       await ArticleServices.AddArticle(ApiUrls.ARTICLE, article);
-      console.log("Article added successfully.");
     } catch (error) {
       console.error("Error adding article:", error);
     }
@@ -234,7 +231,6 @@ const ListeArticles: FC = () => {
     try {
       await ArticleServices.DeleteArticle(ApiUrls.ARTICLE, id);
       await fetchArticleList(0, 50);
-      console.log("Article deleted successfully.");
     } catch (error) {
       console.error("Error delet article:", error);
     }

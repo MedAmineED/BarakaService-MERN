@@ -117,11 +117,9 @@ const FactureCmp: React.FC<FactureCmpProps> = ({ societe, children }) => {
   }, [])
   
   useEffect(()=>{
-    console.log("runned")
     calculateTotals();
     console.log(ligneFactureList)
     if(mode != "create" && factureFinal){
-      console.log(factureFinal.date_facture)
       const dateObject = factureFinal.date_facture.split('T')[0];
       setDateFacture(dateObject)
     }
